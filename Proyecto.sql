@@ -1,4 +1,4 @@
-﻿CREATE DATABASE "Proyecto"
+CREATE DATABASE "Proyecto"
   WITH OWNER = postgres
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
@@ -18,9 +18,12 @@ CREATE TABLE Almacen.Vendedor
 	Telefono VARCHAR(20) NOT NULL,
 	FechaNac DATE NOT NULL,
 	Edad INT,
-	Tipo VARCHAR(50) NOT NULL,
 	CONSTRAINT PK_VENDEDOR PRIMARY KEY(IdVendedor)
 );
+
+
+INSERT INTO Almacen.Vendedor (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('JUAN','DLJBKBKB','JH@BKHBKB','7866125678','05/10/1996')
+SELECT * FROM Almacen.Vendedor
 
 ALTER TABLE Almacen.Vendedor ADD CONSTRAINT UQ_EMAIL UNIQUE (Email);
 
@@ -36,6 +39,8 @@ CREATE TABLE Transaccion.Cliente
 	CONSTRAINT PK_CLIENTE PRIMARY KEY(IdCliente)
 	
 );
+INSERT INTO Transaccion.Cliente (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('DIEGO','DLJBKBKB','JH@BKHBKB','7866125678','05/10/1996')
+SELECT * FROM Transaccion.Cliente
 
 ALTER TABLE Transaccion.Cliente ADD CONSTRAINT UQ_EMAIL UNIQUE (Email);
 
@@ -47,6 +52,9 @@ CREATE TABLE Almacen.TipoProducto
 	CONSTRAINT PK_TIPOPRODUCTO PRIMARY KEY(IdTipoProducto)
 );
 
+INSERT INTO Almacen.TipoProducto(Nombre,Descripcion) VALUES ('PRUEBA','Alamo 22');
+SELECT * FROM Almacen.TipoProducto
+
 CREATE TABLE Almacen.Producto
 (
 	IdProducto BIGSERIAL NOT NULL,
@@ -57,6 +65,9 @@ CREATE TABLE Almacen.Producto
 	CONSTRAINT PK_PRODUCTO1 PRIMARY KEY(IdProducto),
 	CONSTRAINT FK_TIPOPRODUCTO FOREIGN KEY(IdTipoProducto) REFERENCES Almacen.TipoProducto(IdTipoProducto)
 );
+
+INSERT INTO Almacen.Producto (IdTipoProducto,Stock,Tamaño,Precio) VALUES (1,150,'Individual',500)
+SELECT * FROM Almacen.Producto
 
 ALTER TABLE Almacen.Producto ADD CONSTRAINT CH_PRECIO CHECK (
 	Precio >= 100 AND Precio <= 500
@@ -80,12 +91,15 @@ CREATE TABLE Transaccion.Venta
 	CONSTRAINT FK_VENDEDOR FOREIGN KEY (IdVendedor) REFERENCES Almacen.Vendedor(IdVendedor) 
 );
 
+INSERT INTO Transaccion.Venta  (IdCliente,IdVendedor,Fecha) VALUES (1,1,'13/10/2019')
+SELECT * FROM Transaccion.Venta
+
 CREATE TABLE Transaccion.DetalleVenta
 (
 	IdVenta BIGINT NOT NULL,
 	IdProducto BIGINT NOT NULL,
 	Cantidad INT NOT NULL,
-	Subtotal FLOAT NULL,
+	Subtotal FLOAT,
 	CONSTRAINT FK_VENTA2 FOREIGN KEY(IdVenta) REFERENCES Transaccion.Venta(IdVenta),
 	CONSTRAINT FK_PRODUCTO2 FOREIGN KEY(IdProducto) REFERENCES Almacen.Producto(IdProducto)
 );
@@ -96,17 +110,59 @@ CREATE TABLE Almacen.Devolucion
 	IdVenta BIGINT NOT NULL,
 	Motivo VARCHAR(400) NOT NULL,
 	Fecha DATE NOT NULL,
-	Total INT NULL,
+	Total INT,
 	CONSTRAINT PK_DEVOLUCION PRIMARY KEY(IdDevolucion),
 	CONSTRAINT FK_VENTA3 FOREIGN KEY(IdVenta) REFERENCES Transaccion.Venta(IdVenta)
  );
+
+INSERT INTO Almacen.Devolucion (IdVenta,Motivo,Fecha) VALUES (1,'PRUEBA','15/8/2019')
+SELECT * FROM Almacen.Devolucion
+SELECT * FROM Almacen.Producto
 
  CREATE TABLE Almacen.DetalleDevolucion
  (
 	IdDevolucion BIGINT NOT NULL,
 	IdProducto BIGINT NOT NULL,
 	Cantidad INT NOT NULL,
-	Subtotal INT NULL,
+	Subtotal INT,
 	CONSTRAINT FK_DEVOLUCCION FOREIGN KEY(IdDevolucion) REFERENCES Almacen.Devolucion(IdDevolucion),
 	CONSTRAINT FK_VENTA4 FOREIGN KEY(IdProducto) REFERENCES Almacen.Producto(IdProducto)
  );
+ INSERT INTO Almacen.DetalleDevolucion (IdDevolucion,IdProducto,Cantidad) VALUES (1,3,150)
+ SELECT * FROM Almacen.Producto
+ SELECT * FROM Almacen.DetalleDevolucion 
+ DELETE FROM Almacen.DetalleDevolucion  WHERE iddevolucion=1 AND  idproducto=3
+ --triggers
+
+
+CREATE OR REPLACE FUNCTION tr_stock_articulo_almacen()
+  RETURNS TRIGGER AS
+$BODY$
+	DECLARE i_existe INTEGER;
+		i_tipo INTEGER;
+BEGIN
+ 
+	-- Opera trigger
+	IF TG_OP = 'INSERT' THEN
+		UPDATE Almacen.Producto SET Stock = Stock + (NEW.cantidad ) WHERE idproducto = NEW.idproducto;
+ 
+	ELSEIF TG_OP = 'UPDATE' THEN
+		UPDATE Almacen.Producto SET Stock = Stock - (OLD.cantidad ) WHERE idproducto = OLD.idproducto;
+		UPDATE Almacen.Producto SET Stock = Stock + (NEW.cantidad) WHERE idproducto = NEW.idproducto;
+ 
+	ELSEIF TG_OP = 'DELETE' THEN
+		UPDATE Almacen.Producto SET Stock = Stock - (OLD.cantidad ) WHERE idproducto = OLD.idproducto;
+	END IF;
+ 
+	RETURN NULL;
+END;
+$BODY$
+  LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_stock_articulo_DETTALEVENTA AFTER INSERT OR UPDATE OR DELETE 
+ON almacen.detalledevolucion FOR EACH ROW
+EXECUTE PROCEDURE tr_stock_articulo_almacen();
+
+CREATE TRIGGER tr_stock_articulo_DETTALEVENTA AFTER INSERT OR UPDATE OR DELETE 
+ON Transaccion.DetalleVenta FOR EACH ROW
+EXECUTE PROCEDURE tr_stock_articulo_almacen();
