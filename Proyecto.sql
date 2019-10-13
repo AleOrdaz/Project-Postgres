@@ -1,0 +1,112 @@
+﻿CREATE DATABASE "Proyecto"
+  WITH OWNER = postgres
+       ENCODING = 'UTF8'
+       TABLESPACE = pg_default
+       LC_COLLATE = 'Spanish_Mexico.1252'
+       LC_CTYPE = 'Spanish_Mexico.1252'
+       CONNECTION LIMIT = -1;
+
+CREATE SCHEMA Transaccion;
+CREATE SCHEMA Almacen;
+
+CREATE TABLE Almacen.Vendedor
+(
+	IdVendedor BIGSERIAL NOT NULL,
+	Nombre VARCHAR(100) NOT NULL,
+	Domicilio VARCHAR(150) NOT NULL,
+	Email VARCHAR(150) NOT NULL,
+	Telefono VARCHAR(20) NOT NULL,
+	FechaNac DATE NOT NULL,
+	Edad INT,
+	Tipo VARCHAR(50) NOT NULL,
+	CONSTRAINT PK_VENDEDOR PRIMARY KEY(IdVendedor)
+);
+
+ALTER TABLE Almacen.Vendedor ADD CONSTRAINT UQ_EMAIL UNIQUE (Email);
+
+CREATE TABLE Transaccion.Cliente
+(
+	IdCliente BIGSERIAL NOT NULL,
+	Nombre VARCHAR(100) NOT NULL,
+	Domicilio VARCHAR(150) NOT NULL,
+	Email VARCHAR(150) NOT NULL,
+	Telefono VARCHAR(20) NOT NULL,
+	FechaNac DATE NOT NULL,
+	Edad INT,
+	CONSTRAINT PK_CLIENTE PRIMARY KEY(IdCliente)
+	
+);
+
+ALTER TABLE Transaccion.Cliente ADD CONSTRAINT UQ_EMAIL UNIQUE (Email);
+
+CREATE TABLE Almacen.TipoProducto
+(
+	IdTipoProducto BIGSERIAL NOT NULL,
+	Nombre VARCHAR(100) NOT NULL,
+	Descripcion VARCHAR(500) NOT NULL,
+	CONSTRAINT PK_TIPOPRODUCTO PRIMARY KEY(IdTipoProducto)
+);
+
+CREATE TABLE Almacen.Producto
+(
+	IdProducto BIGSERIAL NOT NULL,
+	IdTipoProducto BIGINT NOT NULL,
+	Stock INT NOT NULL,
+	Tamaño VARCHAR(50) NOT NULL,
+	Precio FLOAT NOT NULL,
+	CONSTRAINT PK_PRODUCTO1 PRIMARY KEY(IdProducto),
+	CONSTRAINT FK_TIPOPRODUCTO FOREIGN KEY(IdTipoProducto) REFERENCES Almacen.TipoProducto(IdTipoProducto)
+);
+
+ALTER TABLE Almacen.Producto ADD CONSTRAINT CH_PRECIO CHECK (
+	Precio >= 100 AND Precio <= 500
+);
+
+ ALTER TABLE Almacen.Producto ADD CONSTRAINT CH_TAMAÑO CHECK (
+	Tamaño = 'Individual' OR
+	Tamaño = 'Matrimonial' OR
+	Tamaño = 'Queen Size'
+);
+
+CREATE TABLE Transaccion.Venta 
+(
+	IdVenta BIGSERIAL NOT NULL,
+	IdCliente BIGINT NOT NULL,
+	IdVendedor BIGINT NOT NULL,
+	Fecha DATE NOT NULL,
+	TOTAL FLOAT NULL,
+	CONSTRAINT PK_VENTA1 PRIMARY KEY(IdVenta),
+	CONSTRAINT FK_CLIENTE FOREIGN KEY(IdCliente) REFERENCES Transaccion.Cliente(IdCliente),
+	CONSTRAINT FK_VENDEDOR FOREIGN KEY (IdVendedor) REFERENCES Almacen.Vendedor(IdVendedor) 
+);
+
+CREATE TABLE Transaccion.DetalleVenta
+(
+	IdVenta BIGINT NOT NULL,
+	IdProducto BIGINT NOT NULL,
+	Cantidad INT NOT NULL,
+	Subtotal FLOAT NULL,
+	CONSTRAINT FK_VENTA2 FOREIGN KEY(IdVenta) REFERENCES Transaccion.Venta(IdVenta),
+	CONSTRAINT FK_PRODUCTO2 FOREIGN KEY(IdProducto) REFERENCES Almacen.Producto(IdProducto)
+);
+
+CREATE TABLE Almacen.Devolucion
+ (
+	IdDevolucion BIGSERIAL NOT NULL,
+	IdVenta BIGINT NOT NULL,
+	Motivo VARCHAR(400) NOT NULL,
+	Fecha DATE NOT NULL,
+	Total INT NULL,
+	CONSTRAINT PK_DEVOLUCION PRIMARY KEY(IdDevolucion),
+	CONSTRAINT FK_VENTA3 FOREIGN KEY(IdVenta) REFERENCES Transaccion.Venta(IdVenta)
+ );
+
+ CREATE TABLE Almacen.DetalleDevolucion
+ (
+	IdDevolucion BIGINT NOT NULL,
+	IdProducto BIGINT NOT NULL,
+	Cantidad INT NOT NULL,
+	Subtotal INT NULL,
+	CONSTRAINT FK_DEVOLUCCION FOREIGN KEY(IdDevolucion) REFERENCES Almacen.Devolucion(IdDevolucion),
+	CONSTRAINT FK_VENTA4 FOREIGN KEY(IdProducto) REFERENCES Almacen.Producto(IdProducto)
+ );
