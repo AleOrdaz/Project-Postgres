@@ -66,8 +66,8 @@ CREATE TABLE Almacen.Producto
 	CONSTRAINT FK_TIPOPRODUCTO FOREIGN KEY(IdTipoProducto) REFERENCES Almacen.TipoProducto(IdTipoProducto)
 );
 
-INSERT INTO Almacen.Producto (IdTipoProducto,Stock,Tamaño,Precio) VALUES (1,150,'Individual',500)
-SELECT * FROM Almacen.Producto
+INSERT INTO Almacen.Producto (IdTipoProducto,Stock,Tamaño,Precio) VALUES (1,150,'Individual',500);
+SELECT * FROM Almacen.Producto;
 
 ALTER TABLE Almacen.Producto ADD CONSTRAINT CH_PRECIO CHECK (
 	Precio >= 100 AND Precio <= 500
@@ -91,8 +91,8 @@ CREATE TABLE Transaccion.Venta
 	CONSTRAINT FK_VENDEDOR FOREIGN KEY (IdVendedor) REFERENCES Almacen.Vendedor(IdVendedor) 
 );
 
-INSERT INTO Transaccion.Venta  (IdCliente,IdVendedor,Fecha) VALUES (1,1,'13/10/2019')
-SELECT * FROM Transaccion.Venta
+INSERT INTO Transaccion.Venta  (IdCliente,IdVendedor,Fecha) VALUES (1,1,'13/10/2019');
+SELECT * FROM Transaccion.Venta;
 
 CREATE TABLE Transaccion.DetalleVenta
 (
@@ -115,9 +115,9 @@ CREATE TABLE Almacen.Devolucion
 	CONSTRAINT FK_VENTA3 FOREIGN KEY(IdVenta) REFERENCES Transaccion.Venta(IdVenta)
  );
 
-INSERT INTO Almacen.Devolucion (IdVenta,Motivo,Fecha) VALUES (1,'PRUEBA','15/8/2019')
-SELECT * FROM Almacen.Devolucion
-SELECT * FROM Almacen.Producto
+INSERT INTO Almacen.Devolucion (IdVenta,Motivo,Fecha) VALUES (1,'PRUEBA','15/8/2019');
+SELECT * FROM Almacen.Devolucion;
+SELECT * FROM Almacen.Producto;
 
  CREATE TABLE Almacen.DetalleDevolucion
  (
@@ -128,10 +128,10 @@ SELECT * FROM Almacen.Producto
 	CONSTRAINT FK_DEVOLUCCION FOREIGN KEY(IdDevolucion) REFERENCES Almacen.Devolucion(IdDevolucion),
 	CONSTRAINT FK_VENTA4 FOREIGN KEY(IdProducto) REFERENCES Almacen.Producto(IdProducto)
  );
- INSERT INTO Almacen.DetalleDevolucion (IdDevolucion,IdProducto,Cantidad) VALUES (1,3,150)
- SELECT * FROM Almacen.Producto
- SELECT * FROM Almacen.DetalleDevolucion 
- DELETE FROM Almacen.DetalleDevolucion  WHERE iddevolucion=1 AND  idproducto=3
+ INSERT INTO Almacen.DetalleDevolucion (IdDevolucion,IdProducto,Cantidad) VALUES (1,1,150);
+ SELECT * FROM Almacen.Producto;
+ UPDATE Almacen.DetalleDevolucion SET cantidad = 200 where iddevolucion=1;
+ DELETE FROM Almacen.DetalleDevolucion  WHERE iddevolucion=1 AND  idproducto=3;
  --triggers
 
 
@@ -159,10 +159,35 @@ END;
 $BODY$
   LANGUAGE plpgsql;
 
-CREATE TRIGGER tr_stock_articulo_DETTALEVENTA AFTER INSERT OR UPDATE OR DELETE 
+
+CREATE OR REPLACE FUNCTION tr_stock_articulo_almacen2()
+  RETURNS TRIGGER AS
+$BODY$
+	DECLARE i_existe INTEGER;
+		i_tipo INTEGER;
+BEGIN
+ 
+	-- Opera trigger
+	IF TG_OP = 'INSERT' THEN
+		UPDATE Almacen.Producto SET Stock = Stock - (NEW.cantidad ) WHERE idproducto = NEW.idproducto;
+ 
+	ELSEIF TG_OP = 'UPDATE' THEN
+		UPDATE Almacen.Producto SET Stock = Stock + (OLD.cantidad ) WHERE idproducto = OLD.idproducto;
+		UPDATE Almacen.Producto SET Stock = Stock - (NEW.cantidad) WHERE idproducto = NEW.idproducto;
+ 
+	ELSEIF TG_OP = 'DELETE' THEN
+		UPDATE Almacen.Producto SET Stock = Stock + (OLD.cantidad ) WHERE idproducto = OLD.idproducto;
+	END IF;
+ 
+	RETURN NULL;
+END;
+$BODY$
+  LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_stock_articulo_DETTALEDEVOLUCION AFTER INSERT OR UPDATE OR DELETE 
 ON almacen.detalledevolucion FOR EACH ROW
 EXECUTE PROCEDURE tr_stock_articulo_almacen();
 
 CREATE TRIGGER tr_stock_articulo_DETTALEVENTA AFTER INSERT OR UPDATE OR DELETE 
 ON Transaccion.DetalleVenta FOR EACH ROW
-EXECUTE PROCEDURE tr_stock_articulo_almacen();
+EXECUTE PROCEDURE tr_stock_articulo_almacen2();
