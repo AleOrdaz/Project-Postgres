@@ -191,3 +191,24 @@ EXECUTE PROCEDURE EdadAPersona();
 
 INSERT INTO Almacen.Vendedor (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');
 SELECT * FROM Almacen.Vendedor;
+
+/*********************/
+------Trigger Subtotal------
+CREATE FUNCTION CalculaSubtotal()
+  RETURNS TRIGGER AS
+$$
+    DECLARE 
+BEGIN
+	IF TG_OP = 'INSERT' THEN
+		UPDATE Transaccion.DetalleVenta SET Subtotal = Subtotal + (NEW.cantidad ) WHERE IdDevolucion = NEW.IdDevolucion;
+ 
+	ELSEIF TG_OP = 'UPDATE' THEN
+		UPDATE Transaccion.DetalleVenta SET Subtotal = Subtotal - (OLD.cantidad ) WHERE IdDevolucion = OLD.IdDevolucion;
+ 
+	ELSEIF TG_OP = 'DELETE' THEN
+		UPDATE Transaccion.DetalleVenta SET Subtotal = Subtotal - (OLD.cantidad ) WHERE IdDevolucion = OLD.IdDevolucion;
+	END IF;
+ 
+	RETURN NULL;
+$$
+LANGUAGE plpgsql;
