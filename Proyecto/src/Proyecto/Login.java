@@ -7,8 +7,7 @@ package Proyecto;
 import java.sql.*;
 import javax.swing.*;
 import java.util.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.Point;
+import java.util.logging.*;
 /**
  *
  * @author alejandro
@@ -19,21 +18,17 @@ public class Login extends javax.swing.JFrame {
     private Statement st;
     private PreparedStatement pt;
     private ResultSet rs;
-    private String qry; 
-    private DefaultTableModel modelo;
-    
-    private Point point;
-    private int row;
+    private boolean band=false;
+    public String nombre = "";
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
-        ConectaDB();
     }
 
     public void ConectaDB() {
-        String URL, Nombre, PWD;
+        String URL, Nombre, PWD;;
         URL = "jdbc:postgresql://localhost:5432/Proyecto";
         Nombre = "postgres";
         PWD = "postgres";
@@ -41,6 +36,7 @@ public class Login extends javax.swing.JFrame {
         try {
             conexion = DriverManager.getConnection(URL, Nombre, PWD);
             if(conexion != null){
+                band=true;
                 //javax.swing.JOptionPane.showMessageDialog(this, "Conexión exitosa");
             }
         }
@@ -59,10 +55,10 @@ public class Login extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         TFUsuario = new javax.swing.JTextField();
-        TFContraseña = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -70,8 +66,6 @@ public class Login extends javax.swing.JFrame {
         jLabel1.setText("INISIAR SESIÓN");
 
         TFUsuario.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-
-        TFContraseña.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         jLabel2.setText("Usuario");
@@ -87,6 +81,8 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        jPassword.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -96,16 +92,13 @@ public class Login extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(TFUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(TFContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(94, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(TFUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                    .addComponent(jPassword))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(168, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jButton1)
@@ -123,21 +116,41 @@ public class Login extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(TFUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(32, 32, 32)
+                .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TFContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addGap(39, 39, 39)
+                    .addComponent(jLabel3)
+                    .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(40, 40, 40)
                 .addComponent(jButton1)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Principal p = new Principal();
-        p.setVisible(true);  
+        ConectaDB();
+        if("administrador".equals(TFUsuario.getText()) && band== true){
+            Principal p = new Principal();
+            p.setVisible(true);
+            this.setVisible(false);
+            nombre = "administrador";
+        } 
+        else if("gerente".equals(TFUsuario.getText())&& band==true){
+            Principal p = new Principal();
+            p.setVisible(true);
+            this.setVisible(false);
+            nombre = "gerente";
+        }
+        else if("empleado".equals(TFUsuario.getText())&& band==true){
+            Principal p = new Principal();
+            p.setVisible(true);
+            this.setVisible(false);
+            nombre = "empleado";
+        }
+        else
+            javax.swing.JOptionPane.showMessageDialog(this, "El usuario o contraseña son incorrectos ");
+        Principal.Usuario.setText(TFUsuario.getText());
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -176,11 +189,11 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField TFContraseña;
-    private javax.swing.JTextField TFUsuario;
+    public javax.swing.JTextField TFUsuario;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPasswordField jPassword;
     // End of variables declaration//GEN-END:variables
 }
