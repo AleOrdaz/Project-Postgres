@@ -212,3 +212,8 @@ BEGIN
 	RETURN NULL;
 $$
 LANGUAGE plpgsql;
+												     
+---------------------------------------usuarios--------------------------------------------------
+CREATE ROLE Administrador WITH LOGIN ENCRYPTED PASSWORD '123';
+CREATE ROLE Gerente WITH LOGIN ENCRYPTED PASSWORD '123';
+CREATE ROLE Empleado WITH LOGIN ENCRYPTED PASSWORD '123';
