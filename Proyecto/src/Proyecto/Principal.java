@@ -19,20 +19,30 @@ import java.util.logging.Logger;
  */
 public class Principal extends javax.swing.JFrame {
     
-    private Connection conexion = null; 
+    private Connection Conexion =null;
     private Statement st;
-    private PreparedStatement pt;
+    //evita que la informacion adicional se meta a la base de datos
+    private PreparedStatement pr;
     private ResultSet rs;
-    private String qry; 
+    private String Qry;
     private DefaultTableModel modelo;
+    private int id;
+   
+    private Connection conexion = null; 
+    private PreparedStatement pt;
+    private String qry; 
     public String usuario;
     private Point point;
     private int row;
+    private String tipousuario;
+    private String claveu;
     /**
      * Creates new form Principal
      */
-    public Principal() {
+    public Principal(String nombre,String clave) {
         initComponents();
+        tipousuario=nombre;
+        claveu=clave;
         usuario = Usuario.getText();
         ActualizaTablaClientes();
         ConectaDB();
@@ -45,7 +55,7 @@ public class Principal extends javax.swing.JFrame {
         Nombre = usuario;
         
         try {
-            conexion = DriverManager.getConnection(URL, Usuario.getText(), PWD);
+            conexion = DriverManager.getConnection(URL, tipousuario, claveu);
             if(conexion != null){
                 javax.swing.JOptionPane.showMessageDialog(this, "Conexión exitosa");
             }
@@ -180,6 +190,11 @@ public class Principal extends javax.swing.JFrame {
         jLabel5.setText("Fecha de Nacimiento");
 
         BtnAgregar.setText("Agregar");
+        BtnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnAgregarActionPerformed(evt);
+            }
+        });
 
         BtnModificar.setText("Modificar");
 
@@ -546,6 +561,10 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_TextNombreVActionPerformed
 
+    private void BtnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAgregarActionPerformed
+        
+    }//GEN-LAST:event_BtnAgregarActionPerformed
+    
     /**
      * @param args the command line arguments
      */
@@ -576,7 +595,7 @@ public class Principal extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Principal().setVisible(true);
+                new Principal("","").setVisible(true);
             }
         });
     }

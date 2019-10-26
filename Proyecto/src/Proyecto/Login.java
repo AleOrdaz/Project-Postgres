@@ -11,6 +11,7 @@ import java.util.logging.*;
 /**
  *
  * @author alejandro
+ * @modficado por Diego 26/10/2019
  */
 public class Login extends javax.swing.JFrame {
     
@@ -20,6 +21,9 @@ public class Login extends javax.swing.JFrame {
     private ResultSet rs;
     private boolean band=false;
     public String nombre = "";
+    public String usuariou;
+    public String clave;
+    
     /**
      * Creates new form Login
      */
@@ -28,16 +32,19 @@ public class Login extends javax.swing.JFrame {
     }
 
     public void ConectaDB() {
-        String URL, Nombre, PWD;;
+        String URL, Nombre, PWD;
         URL = "jdbc:postgresql://localhost:5432/Proyecto";
-        Nombre = "postgres";
-        PWD = "postgres";
-        
+        //Nombre ="administrador";
+        Nombre = TFUsuario.getText();
+        PWD = "123";
+        clave=new String(jPassword.getPassword());
+        jLabel4.setText(clave);
+        jLabel4.setText(Nombre);
         try {
-            conexion = DriverManager.getConnection(URL, Nombre, PWD);
+            conexion = DriverManager.getConnection(URL,Nombre,clave);
             if(conexion != null){
                 band=true;
-                //javax.swing.JOptionPane.showMessageDialog(this, "Conexión exitosa");
+                javax.swing.JOptionPane.showMessageDialog(this, "Conexión exitosa");
             }
         }
         catch(Exception e) {
@@ -59,6 +66,7 @@ public class Login extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jPassword = new javax.swing.JPasswordField();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -83,20 +91,13 @@ public class Login extends javax.swing.JFrame {
 
         jPassword.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
+        jLabel4.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        jLabel4.setText("Usuario");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(81, 81, 81)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(TFUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-                    .addComponent(jPassword))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(168, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,6 +107,19 @@ public class Login extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(132, 132, 132))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(81, 81, 81)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(TFUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                            .addComponent(jPassword))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -122,28 +136,32 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(40, 40, 40)
                 .addComponent(jButton1)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        usuariou=TFUsuario.getText();
+        clave=new String (jPassword.getPassword());
         ConectaDB();
         if("administrador".equals(TFUsuario.getText()) && band== true){
-            Principal p = new Principal();
+            Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
             nombre = "administrador";
         } 
         else if("gerente".equals(TFUsuario.getText())&& band==true){
-            Principal p = new Principal();
+            Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
             nombre = "gerente";
         }
         else if("empleado".equals(TFUsuario.getText())&& band==true){
-            Principal p = new Principal();
+            Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
             nombre = "empleado";
@@ -194,6 +212,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPasswordField jPassword;
     // End of variables declaration//GEN-END:variables
 }
