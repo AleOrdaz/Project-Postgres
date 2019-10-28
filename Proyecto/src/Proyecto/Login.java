@@ -34,7 +34,6 @@ public class Login extends javax.swing.JFrame {
     public void ConectaDB() {
         String URL, Nombre, PWD;
         URL = "jdbc:postgresql://localhost:5432/Proyecto";
-        //Nombre ="administrador";
         Nombre = TFUsuario.getText();
         PWD = "123";
         clave=new String(jPassword.getPassword());
@@ -148,23 +147,23 @@ public class Login extends javax.swing.JFrame {
         usuariou=TFUsuario.getText();
         clave=new String (jPassword.getPassword());
         ConectaDB();
-        if("administrador".equals(TFUsuario.getText()) && band== true){
+        if("Administrador".equals(TFUsuario.getText()) && band== true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
-            nombre = "administrador";
+            nombre = "Administrador";
         } 
-        else if("gerente".equals(TFUsuario.getText())&& band==true){
+        else if("Gerente".equals(TFUsuario.getText())&& band==true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
-            nombre = "gerente";
+            nombre = "Gerente";
         }
-        else if("empleado".equals(TFUsuario.getText())&& band==true){
+        else if("Empleado".equals(TFUsuario.getText())&& band==true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
-            nombre = "empleado";
+            nombre = "Empleado";
         }
         else
             javax.swing.JOptionPane.showMessageDialog(this, "El usuario o contraseña son incorrectos ");

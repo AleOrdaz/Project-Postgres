@@ -52,9 +52,12 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="BtnAgregar" max="32767" attributes="0"/>
-                          <Component id="TextFechaNac" alignment="1" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
+                          <Component id="BtnAgregarCliente" pref="177" max="32767" attributes="0"/>
+                          <Component id="TextEmail" alignment="0" max="32767" attributes="0"/>
+                          <Component id="TextDomicilio" alignment="0" max="32767" attributes="0"/>
+                          <Component id="TextNombre" alignment="1" max="32767" attributes="0"/>
+                          <Component id="TextTelefono" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
@@ -62,12 +65,9 @@
                                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="78" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="TextEmail" alignment="0" max="32767" attributes="0"/>
-                          <Component id="TextDomicilio" alignment="0" max="32767" attributes="0"/>
-                          <Component id="TextNombre" alignment="1" max="32767" attributes="0"/>
-                          <Component id="TextTelefono" alignment="0" max="32767" attributes="0"/>
+                          <Component id="FechaClientes" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
@@ -114,12 +114,12 @@
                               <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
                               <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="TextFechaNac" min="-2" max="-2" attributes="0"/>
+                              <Component id="FechaClientes" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="BtnAgregar" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BtnAgregarCliente" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="BtnModificar" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="BtnEliminar" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -149,6 +149,9 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TablaClientesMousePressed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -162,8 +165,6 @@
             <Component class="javax.swing.JTextField" name="TextEmail">
             </Component>
             <Component class="javax.swing.JTextField" name="TextTelefono">
-            </Component>
-            <Component class="javax.swing.JTextField" name="TextFechaNac">
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
@@ -190,28 +191,36 @@
                 <Property name="text" type="java.lang.String" value="Fecha de Nacimiento"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="BtnAgregar">
+            <Component class="javax.swing.JButton" name="BtnAgregarCliente">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Agregar"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnAgregarActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnAgregarClienteActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="BtnModificar">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Modificar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnModificarActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="BtnEliminar">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Eliminar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnEliminarActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="Usuario">
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
               </AuxValues>
+            </Component>
+            <Component class="com.toedter.calendar.JDateChooser" name="FechaClientes">
             </Component>
           </SubComponents>
         </Container>

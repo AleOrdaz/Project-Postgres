@@ -1,4 +1,4 @@
-CREATE DATABASE "Proyecto"
+﻿CREATE DATABASE "Proyecto"
   WITH OWNER = postgres
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
@@ -213,7 +213,7 @@ $$
     DECLARE 
 BEGIN
 	IF TG_OP = 'INSERT' THEN
-		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = NEW.IdVendedor;
+		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = NEW.IdCliente;
 	END IF;
 	RETURN NULL;
 END;
@@ -229,7 +229,13 @@ ON Transaccion.Cliente FOR EACH ROW
 EXECUTE PROCEDURE EdadAPersona2();
 
 INSERT INTO Almacen.Vendedor (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');
+INSERT INTO Transaccion.Cliente(Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');
 SELECT * FROM Almacen.Vendedor;
+SELECT * FROM Transaccion.Cliente;
+
+DROP TRIGGER triGen_edad ON Transaccion.Cliente;
+DROP FUNCTION EdadAPersona2();
+
 
 /*********************/
 ------Trigger Subtotal------

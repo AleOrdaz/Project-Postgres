@@ -12,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.Point;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -44,51 +46,53 @@ public class Principal extends javax.swing.JFrame {
         tipousuario=nombre;
         claveu=clave;
         usuario = Usuario.getText();
-        ActualizaTablaClientes();
         ConectaDB();
+        ActualizaTablaClientes();
     }
     
     public void ConectaDB() {
         String URL, Nombre, PWD;
         URL = "jdbc:postgresql://localhost:5432/Proyecto";
-        PWD = "1234";
         Nombre = usuario;
         
         try {
             conexion = DriverManager.getConnection(URL, tipousuario, claveu);
             if(conexion != null){
-                javax.swing.JOptionPane.showMessageDialog(this, "Conexión exitosa");
+                
             }
         }
         catch(Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Error en la conexión HOLA" + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Error en la conexión HOLA");
         }
     }
     
     public void ActualizaTablaClientes(){
         modelo = new DefaultTableModel();
+        modelo.addColumn("ID");
         modelo.addColumn("Nombre");
         modelo.addColumn("Domicilio");
         modelo.addColumn("Email");
         modelo.addColumn("Telefono");
-        modelo.addColumn("Domicilio");
         modelo.addColumn("FechaNac");
         
         try{
             qry = "SELECT * FROM Transaccion.Cliente";
             st = conexion.createStatement();
             rs = st.executeQuery(qry);
-            String aux[] = new String[3];
+            String aux[] = new String[6];
             while(rs.next()){
                 aux[0] = rs.getString(1);
                 aux[1] = rs.getString(2);                
                 aux[2] = rs.getString(3);
+                aux[3] = rs.getString(4);
+                aux[4] = rs.getString(5);
+                aux[5] = rs.getString(6);
                 modelo.addRow(aux);
             }
             TablaClientes.setModel(modelo);
         }
         catch(Exception e){
-            
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
         }
     }
 
@@ -109,16 +113,16 @@ public class Principal extends javax.swing.JFrame {
         TextDomicilio = new javax.swing.JTextField();
         TextEmail = new javax.swing.JTextField();
         TextTelefono = new javax.swing.JTextField();
-        TextFechaNac = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        BtnAgregar = new javax.swing.JButton();
+        BtnAgregarCliente = new javax.swing.JButton();
         BtnModificar = new javax.swing.JButton();
         BtnEliminar = new javax.swing.JButton();
         Usuario = new javax.swing.JTextField();
+        FechaClientes = new com.toedter.calendar.JDateChooser();
         jPanel4 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         TextNombreV = new javax.swing.JTextField();
@@ -171,6 +175,11 @@ public class Principal extends javax.swing.JFrame {
 
             }
         ));
+        TablaClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                TablaClientesMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(TablaClientes);
 
         TextNombre.addActionListener(new java.awt.event.ActionListener() {
@@ -189,16 +198,26 @@ public class Principal extends javax.swing.JFrame {
 
         jLabel5.setText("Fecha de Nacimiento");
 
-        BtnAgregar.setText("Agregar");
-        BtnAgregar.addActionListener(new java.awt.event.ActionListener() {
+        BtnAgregarCliente.setText("Agregar");
+        BtnAgregarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnAgregarActionPerformed(evt);
+                BtnAgregarClienteActionPerformed(evt);
             }
         });
 
         BtnModificar.setText("Modificar");
+        BtnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnModificarActionPerformed(evt);
+            }
+        });
 
         BtnEliminar.setText("Eliminar");
+        BtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -207,8 +226,11 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BtnAgregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(TextFechaNac, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(BtnAgregarCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                    .addComponent(TextEmail)
+                    .addComponent(TextDomicilio)
+                    .addComponent(TextNombre, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(TextTelefono)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -216,11 +238,8 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(jLabel3)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5))
-                        .addGap(0, 78, Short.MAX_VALUE))
-                    .addComponent(TextEmail)
-                    .addComponent(TextDomicilio)
-                    .addComponent(TextNombre, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(TextTelefono))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(FechaClientes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(41, 41, 41)
@@ -260,10 +279,10 @@ public class Principal extends javax.swing.JFrame {
                         .addGap(17, 17, 17)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(TextFechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(FechaClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(29, 29, 29)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BtnAgregar)
+                    .addComponent(BtnAgregarCliente)
                     .addComponent(BtnModificar)
                     .addComponent(BtnEliminar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
@@ -561,9 +580,96 @@ public class Principal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_TextNombreVActionPerformed
 
-    private void BtnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAgregarActionPerformed
+    /*BOTON AGREGAR UN NUEVO CLIENTE*/
+    private void BtnAgregarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAgregarClienteActionPerformed
+        Qry = "INSERT INTO Transaccion.Cliente(Nombre,Domicilio,Email,Telefono,FechaNac)"
+                + "VALUES(?,?,?,?,?)";
+        String Aux = TextTelefono.getText();
+        Date date = new Date();
+        date = FechaClientes.getDate();
         
-    }//GEN-LAST:event_BtnAgregarActionPerformed
+        try{
+            pt = conexion.prepareCall(Qry); 
+            pt.setString(1, TextNombre.getText());
+            pt.setString(2, TextDomicilio.getText());
+            pt.setString(3, TextEmail.getText());
+            pt.setInt(4,Integer.parseInt(Aux));
+            pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
+            int registro = pt.executeUpdate(); 
+            ActualizaTablaClientes();
+        }
+        catch(Exception e)
+        {
+          JOptionPane.showMessageDialog(this, "No se Ingreso " + e.getMessage());
+        }   
+    }//GEN-LAST:event_BtnAgregarClienteActionPerformed
+
+    /*BOTON MODIFICA UN CLIENTE*/
+    private void BtnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnModificarActionPerformed
+        Qry = "UPDATE Transaccion.Cliente SET"
+                + "Nombre = ? ,"
+                + "Domicilio = ? ,"
+                + "Email = ? ,"
+                + "Telefono = ? ,"
+                + "FechaNac = ? "
+                + "Where IdCliente = ?";
+         String Aux = TextTelefono.getText(); 
+         Date date = new Date();
+        date = FechaClientes.getDate();
+        try{
+            pt = conexion.prepareCall(Qry);
+            pt.setString(1, TextNombre.getText());
+            pt.setString(2, TextDomicilio.getText());
+            pt.setString(3, TextEmail.getText());
+            pt.setInt(4,Integer.parseInt(Aux));
+            pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
+            int registro = pt.executeUpdate();
+            if(registro > 0)
+            {
+               ActualizaTablaClientes();
+            }
+        }
+        catch(Exception e)
+        {
+          JOptionPane.showMessageDialog(this, "No se Modifico " + e.getMessage());
+        }
+
+    }//GEN-LAST:event_BtnModificarActionPerformed
+
+    /*AL DARLE CLICK A UNA COSA EN LA TABLA*/
+    private void TablaClientesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TablaClientesMousePressed
+        point = evt.getPoint();
+        row = TablaClientes.rowAtPoint(point);
+           TablaClientes.getModel();
+           String NombreCl = TablaClientes.getValueAt(row,1).toString();
+           String DomicilioCl = TablaClientes.getValueAt(row,2).toString();
+           String EmailCl = TablaClientes.getValueAt(row,3).toString();
+           String Telefono = TablaClientes.getValueAt(row,4).toString();
+           TextNombre.setText(NombreCl);
+           TextDomicilio.setText(DomicilioCl);
+           TextEmail.setText(EmailCl);
+           TextTelefono.setText(Telefono);
+    }//GEN-LAST:event_TablaClientesMousePressed
+
+    /*BOTON ELIMINA UN CLIENTE*/
+    private void BtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnEliminarActionPerformed
+        Qry = "DELETE FROM Transaccion.Cliente WHERE IdCliente = ?";
+        
+        try{
+            pt = conexion.prepareCall(Qry);
+            pt.setInt(1, Integer.parseInt(TablaClientes.getValueAt(row,0).toString()));
+            int registro = pt.executeUpdate();
+            if(registro > 0)
+            {
+                ActualizaTablaClientes();
+            }
+        }
+        catch(Exception e)
+        {
+          JOptionPane.showMessageDialog(this, "No se Elimino " + e.getMessage());
+        }
+
+    }//GEN-LAST:event_BtnEliminarActionPerformed
     
     /**
      * @param args the command line arguments
@@ -601,20 +707,20 @@ public class Principal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BtnAgregar;
     private javax.swing.JButton BtnAgregar1;
+    private javax.swing.JButton BtnAgregarCliente;
     private javax.swing.JButton BtnEliminar;
     private javax.swing.JButton BtnEliminar1;
     private javax.swing.JButton BtnModificar;
     private javax.swing.JButton BtnModificar1;
     private javax.swing.JComboBox<String> ComboTamaño;
+    private com.toedter.calendar.JDateChooser FechaClientes;
     private javax.swing.JTabbedPane TabClientes;
     private javax.swing.JTable TablaClientes;
     private javax.swing.JTextField TextDomicilio;
     private javax.swing.JTextField TextDomicilioV;
     private javax.swing.JTextField TextEmail;
     private javax.swing.JTextField TextEmailV;
-    private javax.swing.JTextField TextFechaNac;
     private javax.swing.JTextField TextFechaNacV;
     private javax.swing.JTextField TextIdTP;
     private javax.swing.JTextField TextNombre;
