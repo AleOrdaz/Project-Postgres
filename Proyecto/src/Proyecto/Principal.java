@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -47,7 +48,7 @@ public class Principal extends javax.swing.JFrame {
         claveu=clave;
         usuario = Usuario.getText();
         ConectaDB();
-        ActualizaTablaClientes();
+        ActualizaTabla();
     }
     
     public void ConectaDB() {
@@ -66,7 +67,7 @@ public class Principal extends javax.swing.JFrame {
         }
     }
     
-    public void ActualizaTablaClientes(){
+    public void ActualizaTabla(){
         modelo = new DefaultTableModel();
         modelo.addColumn("ID");
         modelo.addColumn("Nombre");
@@ -160,9 +161,17 @@ public class Principal extends javax.swing.JFrame {
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel7 = new javax.swing.JPanel();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        TabClientes.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                TabClientesStateChanged(evt);
+            }
+        });
 
         TablaClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -544,6 +553,7 @@ public class Principal extends javax.swing.JFrame {
         );
 
         TabClientes.addTab("Ventas", jPanel6);
+        TabClientes.addTab("Detalle de Venta", jTabbedPane1);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -557,6 +567,7 @@ public class Principal extends javax.swing.JFrame {
         );
 
         TabClientes.addTab("Devoluciones", jPanel7);
+        TabClientes.addTab("Detalle de Devolución", jTabbedPane2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -596,7 +607,7 @@ public class Principal extends javax.swing.JFrame {
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
             int registro = pt.executeUpdate(); 
-            ActualizaTablaClientes();
+            ActualizaTabla();
         }
         catch(Exception e)
         {
@@ -626,7 +637,7 @@ public class Principal extends javax.swing.JFrame {
             int registro = pt.executeUpdate();
             if(registro > 0)
             {
-               ActualizaTablaClientes();
+               ActualizaTabla();
             }
         }
         catch(Exception e)
@@ -661,7 +672,7 @@ public class Principal extends javax.swing.JFrame {
             int registro = pt.executeUpdate();
             if(registro > 0)
             {
-                ActualizaTablaClientes();
+                ActualizaTabla();
             }
         }
         catch(Exception e)
@@ -670,6 +681,37 @@ public class Principal extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_BtnEliminarActionPerformed
+
+    private void TabClientesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_TabClientesStateChanged
+        switch(TabClientes.getSelectedIndex()){
+            case 0://Cliente
+                    ConectaDB();
+                    ActualizaTabla();
+            break;
+            case 1://Productos
+                    ConectaDB();
+                    ActualizaTabla();
+            break;
+            case 2://Instructor
+                    ConectaDB();
+            break;
+            case 3://Cliente
+                    ConectaDB();
+            break;
+            case 4://Productos
+                    ConectaDB();
+            break;
+            case 5://Instructor
+                    ConectaDB();
+            break;  
+            case 6://Productos
+                    ConectaDB();
+            break;
+            case 7://Instructor
+                    ConectaDB();
+            break;  
+        }
+    }//GEN-LAST:event_TabClientesStateChanged
     
     /**
      * @param args the command line arguments
@@ -759,6 +801,8 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
