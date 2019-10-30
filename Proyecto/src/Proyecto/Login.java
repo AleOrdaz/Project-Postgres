@@ -40,7 +40,8 @@ public class Login extends javax.swing.JFrame {
         jLabel4.setText(clave);
         jLabel4.setText(Nombre);
         try {
-            conexion = DriverManager.getConnection(URL,Nombre,clave);
+           // conexion = DriverManager.getConnection(URL,Nombre,clave);
+            conexion = DriverManager.getConnection(URL, "postgres","postgres");
             if(conexion != null){
                 band=true;
                 javax.swing.JOptionPane.showMessageDialog(this, "Conexión exitosa");

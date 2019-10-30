@@ -200,6 +200,9 @@ $$
 BEGIN
 	IF TG_OP = 'INSERT' THEN
 		UPDATE Almacen.Vendedor SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = NEW.IdVendedor;
+	ELSEIF TG_OP = 'UPDATE' THEN
+		UPDATE Almacen.Vendedor SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = OLD.IdVendedor;
+		UPDATE Almacen.Vendedor SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = NEW.IdVendedor;
 	END IF;
 	RETURN NULL;
 END;
@@ -214,12 +217,17 @@ $$
 BEGIN
 	IF TG_OP = 'INSERT' THEN
 		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = NEW.IdCliente;
+	ELSEIF TG_OP = 'UPDATE' THEN
+		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = OLD.IdCliente;
+		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = NEW.IdCliente;
+
 	END IF;
 	RETURN NULL;
 END;
 $$
   LANGUAGE plpgsql;
 
+		
 CREATE TRIGGER triGen_edad AFTER INSERT OR UPDATE 
 ON Almacen.Vendedor FOR EACH ROW
 EXECUTE PROCEDURE EdadAPersona();
