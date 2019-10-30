@@ -659,15 +659,21 @@ public class Principal extends javax.swing.JFrame {
                 + "Telefono = ? ,"
                 + "FechaNac = ? "
                 + "Where IdCliente = ?";
-         String Aux = TextTelefono.getText(); 
-         
+        String Aux = TextTelefono.getText(); 
+        int day = diaC.getValue();
+        int month = mesC.getMonth();
+        int year = añoC.getYear();
+        String fecha = String.valueOf(year + "/" + month + "/" + day);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+
         try{
+            Date date = formatter.parse(fecha);
             pt = conexion.prepareCall(Qry);
             pt.setString(1, TextNombre.getText());
             pt.setString(2, TextDomicilio.getText());
             pt.setString(3, TextEmail.getText());
             pt.setInt(4,Integer.parseInt(Aux));
-            //pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
+            pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
             int registro = pt.executeUpdate();
             if(registro > 0)
             {
@@ -690,29 +696,16 @@ public class Principal extends javax.swing.JFrame {
            String DomicilioCl = TablaClientes.getValueAt(row,2).toString();
            String EmailCl = TablaClientes.getValueAt(row,3).toString();
            String Telefono = TablaClientes.getValueAt(row,4).toString();
+           String Fecha = TablaClientes.getValueAt(row,5).toString();
+           
            TextNombre.setText(NombreCl);
            TextDomicilio.setText(DomicilioCl);
            TextEmail.setText(EmailCl);
            TextTelefono.setText(Telefono);
-        
-           
-           java.util.Date utilDate = null;
-           java.sql.Date sqlDate = new java.sql.Date(0);
-           utilDate = sqlDate;
-           
-           String fecha = utilDate.toString();
-           for(int d = 0; d < fecha.length(); d++)
-           {
-               if(fecha.codePointAt(d) != 45)
-               {
-                   diaC.setValue(Integer.parseInt(fecha));
-               }
-           }
-           
-           int day = diaC.getValue();
-        int month = mesC.getMonth();
-        int year = añoC.getYear();    
-
+           String [] fechaD = Fecha.split("-");
+           diaC.setValue(Integer.parseInt(fechaD[2]));
+           mesC.setMonth(Integer.parseInt(fechaD[1]));
+           añoC.setYear(Integer.parseInt(fechaD[0]));    
     }//GEN-LAST:event_TablaClientesMousePressed
 
     /*BOTON ELIMINA UN CLIENTE*/
