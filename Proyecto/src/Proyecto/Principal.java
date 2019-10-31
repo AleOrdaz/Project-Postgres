@@ -33,13 +33,14 @@ public class Principal extends javax.swing.JFrame {
    
     private Connection conexion = null; 
     private PreparedStatement pt;
-    private String qry; 
+   // private String qry; 
     public String usuario;
     private Point point;
     private int row;
     private String tipousuario;
     private String claveu;
     private int AT;
+    private String idf;
     /**
      * Creates new form Principal
      */
@@ -82,9 +83,9 @@ public class Principal extends javax.swing.JFrame {
                 modelo.addColumn("Edad");
 
                 try{
-                    qry = "SELECT * FROM Transaccion.Cliente";
+                    Qry = "SELECT * FROM Transaccion.Cliente";
                     st = conexion.createStatement();
-                    rs = st.executeQuery(qry);
+                    rs = st.executeQuery(Qry);
                     String aux[] = new String[7];
                     while(rs.next()){
                         aux[0] = rs.getString(1);
@@ -113,9 +114,9 @@ public class Principal extends javax.swing.JFrame {
                 modelo.addColumn("Edad");
 
                 try{
-                    qry = "SELECT * FROM Almacen.Vendedor";
+                    Qry = "SELECT * FROM Almacen.Vendedor";
                     st = conexion.createStatement();
-                    rs = st.executeQuery(qry);
+                    rs = st.executeQuery(Qry);
                     String aux[] = new String[7];
                     while(rs.next()){
                         aux[0] = rs.getString(1);
@@ -652,7 +653,7 @@ public class Principal extends javax.swing.JFrame {
 
     /*BOTON MODIFICA UN CLIENTE*/
     private void BtnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnModificarActionPerformed
-        Qry = "UPDATE Transaccion.Cliente SET"
+        Qry = "UPDATE Transaccion.Cliente SET "
                 + "Nombre = ? ,"
                 + "Domicilio = ? ,"
                 + "Email = ? ,"
@@ -674,7 +675,10 @@ public class Principal extends javax.swing.JFrame {
             pt.setString(3, TextEmail.getText());
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
+            pt.setInt(6, id);
+            JOptionPane.showMessageDialog(this, id);
             int registro = pt.executeUpdate();
+            JOptionPane.showMessageDialog(this, registro);
             if(registro > 0)
             {
                ActualizaTabla(0);
@@ -692,6 +696,7 @@ public class Principal extends javax.swing.JFrame {
         point = evt.getPoint();
         row = TablaClientes.rowAtPoint(point);
            TablaClientes.getModel();
+           id = Integer.parseInt(TablaClientes.getValueAt(row,0).toString());
            String NombreCl = TablaClientes.getValueAt(row,1).toString();
            String DomicilioCl = TablaClientes.getValueAt(row,2).toString();
            String EmailCl = TablaClientes.getValueAt(row,3).toString();
