@@ -147,19 +147,19 @@ public class Login extends javax.swing.JFrame {
         usuariou=TFUsuario.getText();
         clave=new String (jPassword.getPassword());
         ConectaDB();
-        if("Administrador".equals(TFUsuario.getText()) && band== true){
+        if("Administrador".toUpperCase().equals(TFUsuario.getText().toUpperCase()) && band== true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
             nombre = "Administrador";
         } 
-        else if("Gerente".equals(TFUsuario.getText())&& band==true){
+        else if("Gerente".toUpperCase().equals(TFUsuario.getText().toUpperCase())&& band==true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
             nombre = "Gerente";
         }
-        else if("Empleado".equals(TFUsuario.getText())&& band==true){
+        else if("Empleado".toUpperCase().equals(TFUsuario.getText().toUpperCase())&& band==true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
