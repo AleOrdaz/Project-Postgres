@@ -40,8 +40,8 @@ public class Login extends javax.swing.JFrame {
         jLabel4.setText(clave);
         jLabel4.setText(Nombre);
         try {
-           // conexion = DriverManager.getConnection(URL,Nombre,clave);
-            conexion = DriverManager.getConnection(URL, "postgres","postgres");
+           conexion = DriverManager.getConnection(URL,Nombre,PWD);
+            //conexion = DriverManager.getConnection(URL, "postgres","postgres");
             if(conexion != null){
                 band=true;
                 javax.swing.JOptionPane.showMessageDialog(this, "Conexión exitosa");
@@ -148,27 +148,27 @@ public class Login extends javax.swing.JFrame {
         usuariou=TFUsuario.getText();
         clave=new String (jPassword.getPassword());
         ConectaDB();
-        if("Administrador".toUpperCase().equals(TFUsuario.getText().toUpperCase()) && band== true){
+        if("administrador".equals(TFUsuario.getText()) && band== true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
-            nombre = "Administrador";
+            nombre = "administrador";
         } 
-        else if("Gerente".toUpperCase().equals(TFUsuario.getText().toUpperCase())&& band==true){
+        else if("gerente".equals(TFUsuario.getText())&& band==true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
-            nombre = "Gerente";
+            nombre = "gerente";
         }
-        else if("Empleado".toUpperCase().equals(TFUsuario.getText().toUpperCase())&& band==true){
+        else if("empleado".equals(TFUsuario.getText())&& band==true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
-            nombre = "Empleado";
+            nombre = "empleado";
         }
         else
             javax.swing.JOptionPane.showMessageDialog(this, "El usuario o contraseña son incorrectos ");
-        Principal.Usuario.setText(TFUsuario.getText());
+        //Principal.Usuario.setText(TFUsuario.getText());
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
