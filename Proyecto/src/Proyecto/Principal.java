@@ -298,11 +298,11 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        Usuario.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                UsuarioActionPerformed(evt);
-            }
-        });
+        diaC.setMaximum(31);
+        diaC.setMinimum(1);
+        diaC.setValue(1);
+
+        añoC.setEndYear(2019);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -410,10 +410,20 @@ public class Principal extends javax.swing.JFrame {
         });
 
         BtnModificaVendedor.setText("Modificar");
+        BtnModificaVendedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnModificaVendedorActionPerformed(evt);
+            }
+        });
 
         BtnEliminarVendedor.setText("Eliminar");
         BtnEliminarVendedor.setMaximumSize(new java.awt.Dimension(75, 23));
         BtnEliminarVendedor.setMinimumSize(new java.awt.Dimension(75, 23));
+        BtnEliminarVendedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnEliminarVendedorActionPerformed(evt);
+            }
+        });
 
         TablaVendedor.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -427,7 +437,18 @@ public class Principal extends javax.swing.JFrame {
             }
         ));
         TablaVendedor.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        TablaVendedor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                TablaVendedorMousePressed(evt);
+            }
+        });
         jScrollPane3.setViewportView(TablaVendedor);
+
+        diaV.setMaximum(31);
+        diaV.setMinimum(1);
+        diaV.setValue(1);
+
+        añoV.setEndYear(2019);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -734,11 +755,6 @@ public class Principal extends javax.swing.JFrame {
         jScrollPane7.setViewportView(TablaProdDetalleD1);
 
         BTNAgregarDD.setText("Agregar");
-        BTNAgregarDD.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BTNAgregarDDActionPerformed(evt);
-            }
-        });
 
         BTNModificaDD.setText("Modificar");
 
@@ -963,35 +979,31 @@ public class Principal extends javax.swing.JFrame {
 
     /*BOTON ELIMINA UN VENDEDOR*/
     private void BtnAgregarVendedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAgregarVendedorActionPerformed
-        Qry = "INSERT INTO Transaccion.Cliente(Nombre,Domicilio,Email,Telefono,FechaNac)"
+        Qry = "INSERT INTO Almacen.Vendedor(Nombre,Domicilio,Email,Telefono,FechaNac)"
         + "VALUES(?,?,?,?,?)";
-        String Aux = TextTelefono.getText();
-        int day = diaC.getValue();
-        int month = mesC.getMonth();
-        int year = añoC.getYear();
+        String Aux = TextTelefonoV.getText();
+        int day = diaV.getValue();
+        int month = mesV.getMonth();
+        int year = añoV.getYear();
         String fecha = String.valueOf(year + "/" + month + "/" + day);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
 
         try{
             Date date = formatter.parse(fecha);
             pt = conexion.prepareCall(Qry);
-            pt.setString(1, TextNombre.getText());
-            pt.setString(2, TextDomicilio.getText());
-            pt.setString(3, TextEmail.getText());
+            pt.setString(1, TextNombreV.getText());
+            pt.setString(2, TextDomicilioV.getText());
+            pt.setString(3, TextEmailV.getText());
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
             int registro = pt.executeUpdate();
-            ActualizaTabla(0);
+            ActualizaTabla(1);
         }
         catch(Exception e)
         {
             JOptionPane.showMessageDialog(this, "No se Ingreso " + e.getMessage());
         }
     }//GEN-LAST:event_BtnAgregarVendedorActionPerformed
-
-    private void UsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UsuarioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_UsuarioActionPerformed
 
     /*BOTON ELIMINA UN CLIENTE*/
     private void BtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnEliminarActionPerformed
@@ -1037,9 +1049,7 @@ public class Principal extends javax.swing.JFrame {
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
             pt.setInt(6, id);
-            JOptionPane.showMessageDialog(this, id);
             int registro = pt.executeUpdate();
-            JOptionPane.showMessageDialog(this, registro);
             if(registro > 0)
             {
                 ActualizaTabla(0);
@@ -1079,7 +1089,7 @@ public class Principal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_BtnAgregarClienteActionPerformed
 
-    /*AL DARLE CLICK A UNA COSA EN LA TABLA*/
+    /*AL DARLE CLICK A UNA COSA EN LA TABLA DE CLIENTES*/
     private void TablaClientesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TablaClientesMousePressed
         point = evt.getPoint();
         row = TablaClientes.rowAtPoint(point);
@@ -1101,9 +1111,83 @@ public class Principal extends javax.swing.JFrame {
         añoC.setYear(Integer.parseInt(fechaD[0]));
     }//GEN-LAST:event_TablaClientesMousePressed
 
-    private void BTNAgregarDDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNAgregarDDActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_BTNAgregarDDActionPerformed
+    /*BOTON MODIFICA UN VENDEDOR*/
+    private void BtnModificaVendedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnModificaVendedorActionPerformed
+        Qry = "UPDATE Almacen.Vendedor SET "
+        + "Nombre = ? ,"
+        + "Domicilio = ? ,"
+        + "Email = ? ,"
+        + "Telefono = ? ,"
+        + "FechaNac = ? "
+        + "Where IdVendedor = ?";
+        String Aux = TextTelefonoV.getText();
+        int day = diaV.getValue();
+        int month = mesV.getMonth();
+        int year = añoV.getYear();
+        String fecha = String.valueOf(year + "/" + month + "/" + day);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+
+        try{
+            Date date = formatter.parse(fecha);
+            pt = conexion.prepareCall(Qry);
+            pt.setString(1, TextNombreV.getText());
+            pt.setString(2, TextDomicilioV.getText());
+            pt.setString(3, TextEmailV.getText());
+            pt.setInt(4,Integer.parseInt(Aux));
+            pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
+            pt.setInt(6, id);
+            int registro = pt.executeUpdate();
+            if(registro > 0)
+            {
+                ActualizaTabla(1);
+            }
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(this, "No se Modifico " + e.getMessage());
+        }
+    }//GEN-LAST:event_BtnModificaVendedorActionPerformed
+
+    /*BOTON ELIMINA UN VENDEDOR*/
+    private void BtnEliminarVendedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnEliminarVendedorActionPerformed
+       Qry = "DELETE FROM Almacen.Vendedor WHERE IdVendedor = ?";
+
+        try{
+            pt = conexion.prepareCall(Qry);
+            pt.setInt(1, Integer.parseInt(TablaVendedor.getValueAt(row,0).toString()));
+            int registro = pt.executeUpdate();
+            if(registro > 0)
+            {
+                ActualizaTabla(1);
+            }
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(this, "No se Elimino " + e.getMessage());
+        }
+    }//GEN-LAST:event_BtnEliminarVendedorActionPerformed
+
+    /*AL DARLE CLICK A UNA COSA EN LA TABLA DE VENDEDOR*/
+    private void TablaVendedorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TablaVendedorMousePressed
+           point = evt.getPoint();
+        row = TablaVendedor.rowAtPoint(point);
+        TablaVendedor.getModel();
+        id = Integer.parseInt(TablaVendedor.getValueAt(row,0).toString());
+        String NombreCl = TablaVendedor.getValueAt(row,1).toString();
+        String DomicilioCl = TablaVendedor.getValueAt(row,2).toString();
+        String EmailCl = TablaVendedor.getValueAt(row,3).toString();
+        String Telefono = TablaVendedor.getValueAt(row,4).toString();
+        String Fecha = TablaVendedor.getValueAt(row,5).toString();
+
+        TextNombreV.setText(NombreCl);
+        TextDomicilioV.setText(DomicilioCl);
+        TextEmailV.setText(EmailCl);
+        TextTelefonoV.setText(Telefono);
+        String [] fechaD = Fecha.split("-");
+        diaV.setValue(Integer.parseInt(fechaD[2]));
+        mesV.setMonth(Integer.parseInt(fechaD[1]));
+        añoV.setYear(Integer.parseInt(fechaD[0]));
+    }//GEN-LAST:event_TablaVendedorMousePressed
 
    
     /**
@@ -1174,9 +1258,9 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTextField TextStock;
     private javax.swing.JTextField TextTelefono;
     private javax.swing.JTextField TextTelefonoV;
-    private javax.swing.JTextField Usuario;
-    private javax.swing.JTextField Usuario1;
-    private javax.swing.JTextField Usuario2;
+    public static javax.swing.JTextField Usuario;
+    public static javax.swing.JTextField Usuario1;
+    public static javax.swing.JTextField Usuario2;
     private com.toedter.calendar.JYearChooser añoC;
     private com.toedter.calendar.JYearChooser añoV;
     private com.toedter.components.JSpinField diaC;

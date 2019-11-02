@@ -248,18 +248,23 @@
               </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="Usuario">
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="UsuarioActionPerformed"/>
-              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
               </AuxValues>
             </Component>
             <Component class="com.toedter.components.JSpinField" name="diaC">
+              <Properties>
+                <Property name="maximum" type="int" value="31"/>
+                <Property name="minimum" type="int" value="1"/>
+                <Property name="value" type="int" value="1"/>
+              </Properties>
             </Component>
             <Component class="com.toedter.calendar.JMonthChooser" name="mesC">
             </Component>
             <Component class="com.toedter.calendar.JYearChooser" name="a&#xf1;oC">
+              <Properties>
+                <Property name="endYear" type="int" value="2019"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>
@@ -434,6 +439,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Modificar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnModificaVendedorActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="BtnEliminarVendedor">
               <Properties>
@@ -445,6 +453,9 @@
                   <Dimension value="[75, 23]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnEliminarVendedorActionPerformed"/>
+              </Events>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane3">
               <AuxValues>
@@ -466,14 +477,25 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TablaVendedorMousePressed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
             <Component class="com.toedter.components.JSpinField" name="diaV">
+              <Properties>
+                <Property name="maximum" type="int" value="31"/>
+                <Property name="minimum" type="int" value="1"/>
+                <Property name="value" type="int" value="1"/>
+              </Properties>
             </Component>
             <Component class="com.toedter.calendar.JMonthChooser" name="mesV">
             </Component>
             <Component class="com.toedter.calendar.JYearChooser" name="a&#xf1;oV">
+              <Properties>
+                <Property name="endYear" type="int" value="2019"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="Usuario1">
               <AuxValues>
@@ -945,9 +967,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Agregar"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BTNAgregarDDActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="BTNModificaDD">
               <Properties>

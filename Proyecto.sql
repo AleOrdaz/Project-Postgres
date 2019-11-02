@@ -132,7 +132,7 @@ SELECT * FROM Almacen.DetalleDevolucion
 
 DELETE FROM Almacen.DetalleDevolucion  WHERE iddevolucion=1 AND  idproducto=3
 
- /***triggers***/
+ /*******************************************************************************************triggers************************************************************************/
  --Trigger de Stock
 CREATE OR REPLACE FUNCTION tr_stock_articulo_almacen()
   RETURNS TRIGGER AS
@@ -144,12 +144,12 @@ BEGIN
 	IF TG_OP = 'INSERT' THEN
 		UPDATE Almacen.Producto SET Stock = Stock + (NEW.Cantidad ) WHERE IdProducto = NEW.IdProducto;
  
-	ELSEIF TG_OP = 'UPDATE' THEN
+	ELSIF TG_OP = 'UPDATE' THEN
 		UPDATE Almacen.Producto SET Stock = Stock - (OLD.Cantidad ) WHERE IdProducto = OLD.IdProducto;
 		UPDATE Almacen.Producto SET Stock = Stock + (NEW.Cantidad) WHERE IdProducto = NEW.IdProducto;
  
-	ELSEIF TG_OP = 'DELETE' THEN
-		UPDATE Almacen.Producto SET Stock = Stock - (OLD.Cantidad ) WHERE idproducto = OLD.IdProducto;
+	ELSIF TG_OP = 'DELETE' THEN
+		UPDATE Almacen.Producto SET Stock = Stock - (OLD.Cantidad ) WHERE idProducto = OLD.IdProducto;
 	END IF;
  
 	RETURN NULL;
@@ -168,11 +168,11 @@ BEGIN
 	IF TG_OP = 'INSERT' THEN
 		UPDATE Almacen.Producto SET Stock = Stock - (NEW.Cantidad ) WHERE IdProducto = NEW.IdProducto;
  
-	ELSEIF TG_OP = 'UPDATE' THEN
+	ELSIF TG_OP = 'UPDATE' THEN
 		UPDATE Almacen.Producto SET Stock = Stock + (OLD.Cantidad ) WHERE IdProducto = OLD.IdProducto;
 		UPDATE Almacen.Producto SET Stock = Stock - (NEW.Cantidad) WHERE IdProducto = NEW.IdProducto;
  
-	ELSEIF TG_OP = 'DELETE' THEN
+	ELSIF TG_OP = 'DELETE' THEN
 		UPDATE Almacen.Producto SET Stock = Stock + (OLD.Cantidad ) WHERE IdProducto = OLD.IdProducto;
 	END IF;
  
@@ -182,7 +182,7 @@ $BODY$
   LANGUAGE plpgsql;
 
 CREATE TRIGGER tr_stock_articulo_DETTALEDEVOLUCION AFTER INSERT OR UPDATE OR DELETE 
-ON almacen.detalledevolucion FOR EACH ROW
+ON Almacen.DetalleDevolucion FOR EACH ROW
 EXECUTE PROCEDURE tr_stock_articulo_almacen();
 
 CREATE TRIGGER tr_stock_articulo_DETTALEVENTA AFTER INSERT OR UPDATE OR DELETE 
@@ -191,7 +191,7 @@ EXECUTE PROCEDURE tr_stock_articulo_almacen2();
 
 /*********************/
 -----Trigger Edad
-CREATE FUNCTION EdadAPersona()
+CREATE OR REPLACE FUNCTION EdadAPersona()
   RETURNS TRIGGER AS
 $$
     DECLARE 
@@ -201,16 +201,13 @@ BEGIN
 	ELSEIF TG_OP = 'UPDATE' THEN
 		UPDATE Almacen.Vendedor SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = OLD.IdVendedor;
 		UPDATE Almacen.Vendedor SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = NEW.IdVendedor;
-	ELSEIF TG_OP = 'DELETE' THEN
-		UPDATE Almacen.Vendedor SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = OLD.IdVendedor;
 	END IF;
 	RETURN NULL;
 END;
 $$
   LANGUAGE plpgsql;
 
- 
-CREATE FUNCTION EdadAPersona2()
+CREATE OR REPLACE FUNCTION EdadAPersona2()
   RETURNS TRIGGER AS
 $$
     DECLARE 
@@ -220,8 +217,6 @@ BEGIN
 	ELSEIF TG_OP = 'UPDATE' THEN
 		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = OLD.IdCliente;
 		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = NEW.IdCliente;
-	ELSEIF TG_OP = 'DELETE' THEN
-		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = OLD.IdCliente;
 	END IF;
 	RETURN NULL;
 END;
@@ -268,33 +263,34 @@ END
 $$
 LANGUAGE plpgsql;
 												     
----------------------------------------usuarios--------------------------------------------------
+/**************************************************************usuarios************************/
 CREATE USER Administrador WITH LOGIN ENCRYPTED PASSWORD '123';
 GRANT CONNECT ON DATABASE "Proyecto" TO Administrador;
-GRANT USAGE ON SCHEMA almacen,transaccion TO Administrador;
-SELECT * FROM almacen.Producto;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA almacen,transaccion TO Administrador;
-GRANT ALL PRIVILEGES ON transaccion.cliente,transaccion.detalleventa,transaccion.venta,almacen.detalledevolucion,almacen.devolucion
-,almacen.producto,almacen.tipoproducto,almacen.vendedor TO Administrador;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA almacen,transaccion TO Administrador;
+GRANT USAGE ON SCHEMA Almacen,Transaccion TO Administrador;
+SELECT * FROM Almacen.Producto;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA Almacen,Transaccion TO Administrador;
+GRANT ALL PRIVILEGES ON Transaccion.Cliente,Transaccion.DetalleVenta,Transaccion.Venta,Almacen.DetalleDevolucion,Almacen.Devolucion
+,Almacen.Producto,Almacen.TipoProducto,Almacen.Vendedor TO Administrador;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA Almacen,Transaccion TO Administrador;
 ------------------------------------------------------------------------------------------------------
 CREATE USER Gerente WITH LOGIN ENCRYPTED PASSWORD '123';
 GRANT CONNECT ON DATABASE "Proyecto" TO Gerente; 
-GRANT USAGE ON SCHEMA almacen,transaccion TO Gerente;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA almacen,transaccion TO Gerente;
-GRANT INSERT,UPDATE,DELETE ON transaccion.cliente,transaccion.detalleventa,transaccion.venta TO Gerente;
-GRANT SELECT ON ALL TABLES IN SCHEMA transaccion,almacen TO Gerente;
-GRANT INSERT,UPDATE,DELETE ON almacen.detalledevolucion,almacen.devolucion,almacen.vendedor TO Gerente;
+GRANT USAGE ON SCHEMA Almacen,Transaccion TO Gerente;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA Almacen,Transaccion TO Gerente;
+GRANT INSERT,UPDATE,DELETE ON Transaccion.Cliente,Transaccion.DetalleVenta,Transaccion.Venta TO Gerente;
+GRANT SELECT ON ALL TABLES IN SCHEMA Transaccion,Almacen TO Gerente;
+GRANT INSERT,UPDATE,DELETE ON Almacen.DetalleDevolucion,Almacen.Devolucion,Almacen.Vendedor TO Gerente;
 ---------------------------------------------------------------------
 CREATE USER Empleado WITH LOGIN ENCRYPTED PASSWORD '123';
 GRANT CONNECT ON DATABASE "Proyecto" TO Empleado; 
-GRANT USAGE ON SCHEMA almacen,transaccion TO Empleado;
-GRANT SELECT ON ALL TABLES IN SCHEMA transaccion,almacen TO Empleado;
+GRANT USAGE ON SCHEMA Almacen,Transaccion TO Empleado;
+GRANT SELECT ON ALL TABLES IN SCHEMA Transaccion,Almacen TO Empleado;
 
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA almacen,transaccion TO Empleado;
-GRANT INSERT,UPDATE,DELETE ON transaccion.cliente,transaccion.detalleventa,transaccion.venta,almacen.detalledevolucion,almacen.devolucion
-,almacen.producto,almacen.tipoproducto,almacen.vendedor TO Empleado;
-REVOKE INSERT,UPDATE,DELETE ON TABLE transaccion.cliente FROM Empleado;
-GRANT INSERT,UPDATE,DELETE ON almacen.detalledevolucion,almacen.devolucion TO Empleado;
-DROP USER Empleado;
-DROP OWNED BY Empleado;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA Almacen,Transaccion TO Empleado;
+GRANT INSERT,UPDATE,DELETE ON Transaccion.Cliente,Transaccion.DetalleVenta,Transaccion.Venta,Almacen.DetalleDevolucion,Almacen.Devolucion
+,Almacen.Producto,Almacen.TipoProducto,Almacen.Vendedor TO Empleado;
+REVOKE INSERT,UPDATE,DELETE ON TABLE Transaccion.Cliente FROM Empleado;
+GRANT INSERT,UPDATE,DELETE ON Almacen.DetalleDevolucion,Almacen.Devolucion TO Empleado;
+
+DROP USER Administrador;
+DROP OWNED BY Administrador;
