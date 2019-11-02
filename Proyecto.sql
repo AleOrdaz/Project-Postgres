@@ -271,24 +271,30 @@ LANGUAGE plpgsql;
 ---------------------------------------usuarios--------------------------------------------------
 CREATE USER Administrador WITH LOGIN ENCRYPTED PASSWORD '123';
 GRANT CONNECT ON DATABASE "Proyecto" TO Administrador;
-GRANT USAGE ON SCHEMA Almacen,Transaccion TO Administrador;
-SELECT * FROM Almacen.Producto;
-GRANT SELECT,UPDATE,INSERT,DELETE ON ALL TABLES IN SCHEMA Almacen,Transaccion TO Administrador;
+GRANT USAGE ON SCHEMA almacen,transaccion TO Administrador;
+SELECT * FROM almacen.Producto;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA almacen,transaccion TO Administrador;
+GRANT ALL PRIVILEGES ON transaccion.cliente,transaccion.detalleventa,transaccion.venta,almacen.detalledevolucion,almacen.devolucion
+,almacen.producto,almacen.tipoproducto,almacen.vendedor TO Administrador;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA almacen,transaccion TO Administrador;
 ------------------------------------------------------------------------------------------------------
 CREATE USER Gerente WITH LOGIN ENCRYPTED PASSWORD '123';
 GRANT CONNECT ON DATABASE "Proyecto" TO Gerente; 
-GRANT USAGE ON SCHEMA Almacen,Transaccion TO Gerente;
-GRANT INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA Transaccion TO Gerente;
-GRANT SELECT ON ALL TABLES IN SCHEMA Transaccion,Almacen TO Gerente;
-GRANT INSERT,UPDATE,DELETE ON Almacen.DetalleDevolucion,Almacen.Devolucion,Almacen.Vendedor TO Gerente;
+GRANT USAGE ON SCHEMA almacen,transaccion TO Gerente;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA almacen,transaccion TO Gerente;
+GRANT INSERT,UPDATE,DELETE ON transaccion.cliente,transaccion.detalleventa,transaccion.venta TO Gerente;
+GRANT SELECT ON ALL TABLES IN SCHEMA transaccion,almacen TO Gerente;
+GRANT INSERT,UPDATE,DELETE ON almacen.detalledevolucion,almacen.devolucion,almacen.vendedor TO Gerente;
 ---------------------------------------------------------------------
 CREATE USER Empleado WITH LOGIN ENCRYPTED PASSWORD '123';
 GRANT CONNECT ON DATABASE "Proyecto" TO Empleado; 
-GRANT USAGE ON SCHEMA Almacen,Transaccion TO Empleado;
-GRANT SELECT ON ALL TABLES IN SCHEMA Transaccion,Almacen TO Empleado;
-GRANT INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA Transaccion TO Empleado;
-REVOKE INSERT,UPDATE,DELETE ON TABLE Transaccion.Cliente FROM Empleado;
-GRANT INSERT,UPDATE,DELETE ON Almacen.DetalleDevolucion,Almacen.Devolucion TO Empleado;
+GRANT USAGE ON SCHEMA almacen,transaccion TO Empleado;
+GRANT SELECT ON ALL TABLES IN SCHEMA transaccion,almacen TO Empleado;
 
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA almacen,transaccion TO Empleado;
+GRANT INSERT,UPDATE,DELETE ON transaccion.cliente,transaccion.detalleventa,transaccion.venta,almacen.detalledevolucion,almacen.devolucion
+,almacen.producto,almacen.tipoproducto,almacen.vendedor TO Empleado;
+REVOKE INSERT,UPDATE,DELETE ON TABLE transaccion.cliente FROM Empleado;
+GRANT INSERT,UPDATE,DELETE ON almacen.detalledevolucion,almacen.devolucion TO Empleado;
 DROP USER Empleado;
 DROP OWNED BY Empleado;
