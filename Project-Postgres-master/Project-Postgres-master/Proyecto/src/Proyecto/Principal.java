@@ -21,7 +21,6 @@ import java.util.Date;
  * @author alejandro
  */
 public class Principal extends javax.swing.JFrame {
-    
     private Connection Conexion =null;
     private Statement st;
     //evita que la informacion adicional se meta a la base de datos
@@ -35,11 +34,9 @@ public class Principal extends javax.swing.JFrame {
     private PreparedStatement pt;
     public String usuario;
     private Point point;
-    private int row;
-    private String tipousuario;
-    private String claveu;
-    private int AT;
-    private String idf;
+    private int row, AT, idVenta;
+    private String tipousuario, claveu, idf;
+    private boolean seleccionado;
     /**
      * Creates new form Principal
      */
@@ -49,7 +46,8 @@ public class Principal extends javax.swing.JFrame {
         claveu=clave;
         usuario = Usuario.getText();
         ConectaDB();
-        ActualizaTabla(0);
+        ActualizaTabla(0, TablaClientes);
+        seleccionado = false;
     }
     
     public void ConectaDB() {
@@ -80,15 +78,14 @@ public class Principal extends javax.swing.JFrame {
                 }
             }
             //conexion = DriverManager.getConnection(URL, tipousuario, claveu);
-            
         }
-        catch(Exception e) {
+        catch(SQLException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Error en la conexión Principal");
         }
     }
     
     /*FUNCION CARGA LAS TABLAS EN CADA PAGINA*/
-    public void ActualizaTabla(int AT){
+    public void ActualizaTabla(int AT, JTable tabla){
          switch(AT){
             case 0:
                 modelo = new DefaultTableModel();
@@ -115,7 +112,7 @@ public class Principal extends javax.swing.JFrame {
                         aux[6] = rs.getString(7);
                         modelo.addRow(aux);
                     }
-                    TablaClientes.setModel(modelo);
+                    tabla.setModel(modelo);
                 }
                 catch(Exception e){
                     javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
@@ -146,9 +143,35 @@ public class Principal extends javax.swing.JFrame {
                         aux[6] = rs.getString(7);
                         modelo.addRow(aux);
                     }
-                    TablaVendedor.setModel(modelo);
+                    tabla.setModel(modelo);
                 }
                 catch(Exception e){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
+                }
+            break;
+            case 3:
+                modelo = new DefaultTableModel();
+                modelo.addColumn("IdVenta");
+                modelo.addColumn("IdCliente");
+                modelo.addColumn("IdVendedor");
+                modelo.addColumn("Fecha");
+                modelo.addColumn("Total");
+                try{
+                    Qry = "SELECT * FROM Transaccion.Venta";
+                    st = conexion.createStatement();
+                    rs = st.executeQuery(Qry);
+                    String aux[] = new String[7];
+                    while(rs.next()){
+                        aux[0] = rs.getString(1);
+                        aux[1] = rs.getString(2);                
+                        aux[2] = rs.getString(3);
+                        aux[3] = rs.getString(4);
+                        aux[4] = rs.getString(5);
+                        modelo.addRow(aux);
+                    }
+                    jTableVentas.setModel(modelo);
+                }
+                catch(SQLException e){
                     javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
                 }
             break;
@@ -224,6 +247,21 @@ public class Principal extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
+        jScrollPane10 = new javax.swing.JScrollPane();
+        jTableVer = new javax.swing.JTable();
+        jButtonVerVendedores = new javax.swing.JButton();
+        jButtonVerClientes = new javax.swing.JButton();
+        jTextFieldVendedor = new javax.swing.JTextField();
+        jTextFieldCliente = new javax.swing.JTextField();
+        jLabelVendedor = new javax.swing.JLabel();
+        jLabelVendedor1 = new javax.swing.JLabel();
+        jScrollPane11 = new javax.swing.JScrollPane();
+        jTableVentas = new javax.swing.JTable();
+        jButtonAgregar = new javax.swing.JButton();
+        jButtonModificar = new javax.swing.JButton();
+        jButtonEliminar = new javax.swing.JButton();
+        jDateChooserFechaVenta = new com.toedter.calendar.JDateChooser();
+        jLabelFecha = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -368,7 +406,7 @@ public class Principal extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -548,7 +586,7 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(BtnAgregarVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BtnEliminarVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BtnModificaVendedor))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(Usuario2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37))
             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -693,7 +731,7 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(jButton1)
                             .addComponent(jButton2)
                             .addComponent(jButton3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -720,15 +758,149 @@ public class Principal extends javax.swing.JFrame {
 
         TabClientes.addTab("Productos", jPanel5);
 
+        jTableVer.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jTableVer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableVerMouseClicked(evt);
+            }
+        });
+        jScrollPane10.setViewportView(jTableVer);
+
+        jButtonVerVendedores.setText("Ver Vendedores");
+        jButtonVerVendedores.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonVerVendedoresMouseClicked(evt);
+            }
+        });
+
+        jButtonVerClientes.setText("Ver Clientes");
+        jButtonVerClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonVerClientesMouseClicked(evt);
+            }
+        });
+
+        jLabelVendedor.setText("ID Vendedor:");
+
+        jLabelVendedor1.setText("ID Cliente:");
+
+        jTableVentas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jTableVentas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableVentasMouseClicked(evt);
+            }
+        });
+        jScrollPane11.setViewportView(jTableVentas);
+
+        jButtonAgregar.setText("Agregar");
+        jButtonAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAgregarActionPerformed(evt);
+            }
+        });
+
+        jButtonModificar.setText("Modificar");
+        jButtonModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModificarActionPerformed(evt);
+            }
+        });
+
+        jButtonEliminar.setText("Eliminar");
+        jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminarActionPerformed(evt);
+            }
+        });
+
+        jLabelFecha.setText("Fecha:");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 765, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jButtonVerVendedores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jTextFieldVendedor))
+                                    .addComponent(jLabelVendedor))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jButtonVerClientes, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                                        .addComponent(jTextFieldCliente))
+                                    .addComponent(jLabelVendedor1)))
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabelFecha)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jDateChooserFechaVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonAgregar)
+                            .addComponent(jButtonModificar)
+                            .addComponent(jButtonEliminar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                        .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 382, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonVerVendedores)
+                            .addComponent(jButtonVerClientes))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelVendedor)
+                            .addComponent(jLabelVendedor1))
+                        .addGap(9, 9, 9)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextFieldVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jDateChooserFechaVenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelFecha))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jButtonAgregar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonModificar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonEliminar))))
         );
 
         TabClientes.addTab("Ventas", jPanel6);
@@ -927,7 +1099,7 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(jLabel23)
                 .addGap(7, 7, 7)
                 .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -966,21 +1138,21 @@ public class Principal extends javax.swing.JFrame {
         switch(TabClientes.getSelectedIndex()){
             case 0://Cliente
             ConectaDB();
-            ActualizaTabla(0);
+            ActualizaTabla(0, TablaClientes);
             break;
             case 1://Vendedor
             ConectaDB();
-            ActualizaTabla(1);
+            ActualizaTabla(1, TablaVendedor);
             break;
-            case 2://Productor
+            /*case 2://Productor
             ConectaDB();
             ActualizaTabla(2);
-            break;
+            break;*/
             case 3://Venta
             ConectaDB();
-            ActualizaTabla(3);
+            ActualizaTabla(3, null);
             break;
-            case 4://Detalle de Venta
+            /*case 4://Detalle de Venta
             ConectaDB();
             ActualizaTabla(4);
             break;
@@ -991,7 +1163,7 @@ public class Principal extends javax.swing.JFrame {
             case 6://Detalle Devolucion
             ConectaDB();
             ActualizaTabla(6);
-            break;
+            break;*/
         }
     }//GEN-LAST:event_TabClientesStateChanged
 
@@ -1015,7 +1187,7 @@ public class Principal extends javax.swing.JFrame {
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
             int registro = pt.executeUpdate();
-            ActualizaTabla(1);
+            ActualizaTabla(1, TablaVendedor);
         }
         catch(Exception e)
         {
@@ -1033,7 +1205,7 @@ public class Principal extends javax.swing.JFrame {
             int registro = pt.executeUpdate();
             if(registro > 0)
             {
-                ActualizaTabla(0);
+                ActualizaTabla(0, TablaClientes);
             }
         }
         catch(Exception e)
@@ -1070,7 +1242,7 @@ public class Principal extends javax.swing.JFrame {
             int registro = pt.executeUpdate();
             if(registro > 0)
             {
-                ActualizaTabla(0);
+                ActualizaTabla(0, TablaClientes);
             }
         }
         catch(Exception e)
@@ -1099,7 +1271,7 @@ public class Principal extends javax.swing.JFrame {
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
             int registro = pt.executeUpdate();
-            ActualizaTabla(0);
+            ActualizaTabla(0, TablaClientes);
         }
         catch(Exception e)
         {
@@ -1157,7 +1329,7 @@ public class Principal extends javax.swing.JFrame {
             int registro = pt.executeUpdate();
             if(registro > 0)
             {
-                ActualizaTabla(1);
+                ActualizaTabla(1, TablaVendedor);
             }
         }
         catch(Exception e)
@@ -1176,7 +1348,7 @@ public class Principal extends javax.swing.JFrame {
             int registro = pt.executeUpdate();
             if(registro > 0)
             {
-                ActualizaTabla(1);
+                ActualizaTabla(1, TablaVendedor);
             }
         }
         catch(Exception e)
@@ -1196,7 +1368,6 @@ public class Principal extends javax.swing.JFrame {
         String EmailCl = TablaVendedor.getValueAt(row,3).toString();
         String Telefono = TablaVendedor.getValueAt(row,4).toString();
         String Fecha = TablaVendedor.getValueAt(row,5).toString();
-
         TextNombreV.setText(NombreCl);
         TextDomicilioV.setText(DomicilioCl);
         TextEmailV.setText(EmailCl);
@@ -1206,6 +1377,121 @@ public class Principal extends javax.swing.JFrame {
         mesV.setMonth(Integer.parseInt(fechaD[1]));
         añoV.setYear(Integer.parseInt(fechaD[0]));
     }//GEN-LAST:event_TablaVendedorMousePressed
+
+    private void jButtonVerVendedoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonVerVendedoresMouseClicked
+        // TODO add your handling code here:
+        seleccionado = false;
+        ActualizaTabla(1, jTableVer);
+    }//GEN-LAST:event_jButtonVerVendedoresMouseClicked
+
+    private void jButtonVerClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonVerClientesMouseClicked
+        // TODO add your handling code here:
+        seleccionado = true;
+        ActualizaTabla(0, jTableVer);
+    }//GEN-LAST:event_jButtonVerClientesMouseClicked
+
+    private void jTableVerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableVerMouseClicked
+        // TODO add your handling code here:
+        int fila = jTableVer.getSelectedRow();
+        if(fila != -1){
+            int columns = jTableVer.getColumnCount();
+            ArrayList<String> valores = new ArrayList<>();
+            for(int i = 0; i < columns - 1; i++){
+                valores.add(jTableVer.getValueAt(fila, i).toString());
+            }
+            if(seleccionado){
+                jTextFieldCliente.setText(valores.get(0));
+            }
+            else{
+                jTextFieldVendedor.setText(valores.get(0));
+            }
+        }
+    }//GEN-LAST:event_jTableVerMouseClicked
+
+    private void jButtonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarActionPerformed
+        // TODO add your handling code here:
+        if(!"".equals(jTextFieldCliente.getText()) && !"".equals(jTextFieldVendedor.getText()) && !"".equals(jDateChooserFechaVenta.getDate().toString())){
+            Qry = "INSERT INTO Transaccion.Venta(IdCliente,IdVendedor,Fecha)"
+                + "VALUES(?,?,?)";
+            Date date = new Date();
+            date = jDateChooserFechaVenta.getDate();
+
+            try{
+                pt = conexion.prepareCall(Qry); 
+                pt.setInt(1,  Integer.parseInt(jTextFieldCliente.getText()));
+                pt.setInt(2, Integer.parseInt(jTextFieldVendedor.getText()));
+                pt.setDate(3,new java.sql.Date(date.getTime()));//FECHA
+                int registro = pt.executeUpdate(); 
+                ActualizaTabla(3, null);
+            }
+            catch(Exception e)
+            {
+              JOptionPane.showMessageDialog(this, e.getMessage());
+            }   
+        }
+    }//GEN-LAST:event_jButtonAgregarActionPerformed
+
+    private void jTableVentasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableVentasMouseClicked
+        // TODO add your handling code here:
+        int fila = jTableVentas.getSelectedRow();
+        if(fila != -1){
+            int columns = jTableVentas.getColumnCount();
+            ArrayList<String> valores = new ArrayList<>();
+            for(int i = 0; i < columns - 1; i++){
+                valores.add(jTableVentas.getValueAt(fila, i).toString());
+            }
+            jTextFieldCliente.setText(valores.get(2));
+            jTextFieldVendedor.setText(valores.get(1));
+            idVenta = Integer.parseInt(valores.get(0));
+        }else{
+            idVenta = -1;
+        }
+    }//GEN-LAST:event_jTableVentasMouseClicked
+
+    private void jButtonModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificarActionPerformed
+        // TODO add your handling code here:
+        if(idVenta != -1){
+            Qry = "UPDATE Transaccion.Venta SET"
+                    + " IdCliente = ? ,"
+                    + " IdVendedor = ? ,"
+                    + " Fecha = ? "
+                    + "WHERE IdVenta = ?;";
+             Date date = new Date();
+            date = jDateChooserFechaVenta.getDate();
+            try{
+                pt = conexion.prepareCall(Qry);
+                pt.setInt(1,Integer.parseInt(jTextFieldCliente.getText()));
+                pt.setInt(2,Integer.parseInt(jTextFieldCliente.getText()));
+                pt.setDate(3,new java.sql.Date(date.getTime()));//FECHA
+                pt.setInt(4, idVenta);
+                int registro = pt.executeUpdate();
+                ActualizaTabla(3, null);
+            }
+            catch(Exception e)
+            {
+              JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_jButtonModificarActionPerformed
+
+    private void jButtonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarActionPerformed
+        // TODO add your handling code here:
+        if(idVenta != -1){
+            Qry = "DELETE FROM Transaccion.Venta WHERE IdVenta = ?";
+            try{
+                pt = conexion.prepareCall(Qry);
+                pt.setInt(1, idVenta);
+                int registro = pt.executeUpdate();
+                if(registro > 0)
+                ActualizaTabla(3, null);
+                
+            }
+            catch(Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "No se Elimino " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_jButtonEliminarActionPerformed
 
    
     /**
@@ -1286,6 +1572,12 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButtonAgregar;
+    private javax.swing.JButton jButtonEliminar;
+    private javax.swing.JButton jButtonModificar;
+    private javax.swing.JButton jButtonVerClientes;
+    private javax.swing.JButton jButtonVerVendedores;
+    private com.toedter.calendar.JDateChooser jDateChooserFechaVenta;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1312,6 +1604,9 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelFecha;
+    private javax.swing.JLabel jLabelVendedor;
+    private javax.swing.JLabel jLabelVendedor1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1320,6 +1615,8 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane10;
+    private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -1330,11 +1627,15 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
+    private javax.swing.JTable jTableVentas;
+    private javax.swing.JTable jTableVer;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextFieldCliente;
+    private javax.swing.JTextField jTextFieldVendedor;
     private com.toedter.calendar.JMonthChooser mesC;
     private com.toedter.calendar.JMonthChooser mesV;
     // End of variables declaration//GEN-END:variables
