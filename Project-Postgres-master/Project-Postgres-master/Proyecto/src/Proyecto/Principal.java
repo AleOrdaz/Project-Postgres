@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.util.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Point;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.text.SimpleDateFormat;
@@ -34,7 +35,7 @@ public class Principal extends javax.swing.JFrame {
     private PreparedStatement pt;
     public String usuario;
     private Point point;
-    private int row, AT, idVenta;
+    private int row, AT, idVenta, idDevolucion;
     private String tipousuario, claveu, idf;
     private boolean seleccionado;
     /**
@@ -169,13 +170,48 @@ public class Principal extends javax.swing.JFrame {
                         aux[4] = rs.getString(5);
                         modelo.addRow(aux);
                     }
-                    jTableVentas.setModel(modelo);
+                    if(tabla == null){
+                        jTableVentas.setModel(modelo);
+                    }
+                    else{
+                        tabla.setModel(modelo);
+                    }
                 }
                 catch(SQLException e){
                     javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
                 }
             break;
-                
+            case 4:
+                modelo = new DefaultTableModel();
+                modelo.addColumn("IdDevolucion");
+                modelo.addColumn("IdVenta");
+                modelo.addColumn("Motivo");
+                modelo.addColumn("Fecha");
+                modelo.addColumn("Total");
+                try{
+                    Qry = "SELECT * FROM Almacen.Devolucion";
+                    st = conexion.createStatement();
+                    rs = st.executeQuery(Qry);
+                    String aux[] = new String[7];
+                    while(rs.next()){
+                        aux[0] = rs.getString(1);
+                        aux[1] = rs.getString(2);                
+                        aux[2] = rs.getString(3);
+                        aux[3] = rs.getString(4);
+                        aux[4] = rs.getString(5);
+                        modelo.addRow(aux);
+                    }
+                    if(tabla == null){
+                        jTableDevoluciones.setModel(modelo);
+                    }
+                    else{
+                        tabla.setModel(modelo);
+                    }
+                }
+                catch(SQLException e){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
+                }
+                break;
         }
     }
 
@@ -263,6 +299,21 @@ public class Principal extends javax.swing.JFrame {
         jDateChooserFechaVenta = new com.toedter.calendar.JDateChooser();
         jLabelFecha = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
+        jButtonVerVentas = new javax.swing.JButton();
+        jLabelVendedor2 = new javax.swing.JLabel();
+        jTextFieldVenta = new javax.swing.JTextField();
+        jScrollPane12 = new javax.swing.JScrollPane();
+        jTableVerVentas = new javax.swing.JTable();
+        jLabelFecha1 = new javax.swing.JLabel();
+        jDateChooserFechaDevolucion = new com.toedter.calendar.JDateChooser();
+        jLabel27 = new javax.swing.JLabel();
+        jScrollPane13 = new javax.swing.JScrollPane();
+        jTextAreaMotivo = new javax.swing.JTextArea();
+        jScrollPane14 = new javax.swing.JScrollPane();
+        jTableDevoluciones = new javax.swing.JTable();
+        jButtonAgregarDevolucion = new javax.swing.JButton();
+        jButtonModificarDevolucion = new javax.swing.JButton();
+        jButtonEliminarDevolucion = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         TablaProdDetalleD = new javax.swing.JTable();
@@ -365,7 +416,7 @@ public class Principal extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(299, Short.MAX_VALUE)
+                .addContainerGap(421, Short.MAX_VALUE)
                 .addComponent(BtnAgregarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49)
                 .addComponent(BtnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -533,7 +584,7 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(jLabel8)
                             .addComponent(jLabel9)
                             .addComponent(TextNombreV))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 171, Short.MAX_VALUE)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
@@ -548,7 +599,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createSequentialGroup()
                     .addGap(339, 339, 339)
                     .addComponent(Usuario1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(340, Short.MAX_VALUE)))
+                    .addContainerGap(462, Short.MAX_VALUE)))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -702,7 +753,7 @@ public class Principal extends javax.swing.JFrame {
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(30, 30, 30)
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 158, Short.MAX_VALUE)
                                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(16, 16, 16))
         );
@@ -867,7 +918,7 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(jButtonAgregar)
                             .addComponent(jButtonModificar)
                             .addComponent(jButtonEliminar))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
                         .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         jPanel6Layout.setVerticalGroup(
@@ -905,15 +956,145 @@ public class Principal extends javax.swing.JFrame {
 
         TabClientes.addTab("Ventas", jPanel6);
 
+        jButtonVerVentas.setText("Ver Ventas");
+        jButtonVerVentas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonVerVentasMouseClicked(evt);
+            }
+        });
+
+        jLabelVendedor2.setText("ID Venta:");
+
+        jTableVerVentas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jTableVerVentas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableVerVentasMouseClicked(evt);
+            }
+        });
+        jScrollPane12.setViewportView(jTableVerVentas);
+
+        jLabelFecha1.setText("Fecha:");
+
+        jLabel27.setText("Motivo:");
+
+        jTextAreaMotivo.setColumns(20);
+        jTextAreaMotivo.setRows(5);
+        jScrollPane13.setViewportView(jTextAreaMotivo);
+
+        jTableDevoluciones.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jTableDevoluciones.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableDevolucionesMouseClicked(evt);
+            }
+        });
+        jScrollPane14.setViewportView(jTableDevoluciones);
+
+        jButtonAgregarDevolucion.setText("Agregar");
+        jButtonAgregarDevolucion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAgregarDevolucionActionPerformed(evt);
+            }
+        });
+
+        jButtonModificarDevolucion.setText("Modificar");
+        jButtonModificarDevolucion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModificarDevolucionActionPerformed(evt);
+            }
+        });
+
+        jButtonEliminarDevolucion.setText("Eliminar");
+        jButtonEliminarDevolucion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminarDevolucionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 765, Short.MAX_VALUE)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel7Layout.createSequentialGroup()
+                                        .addComponent(jTextFieldVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jDateChooserFechaDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel7Layout.createSequentialGroup()
+                                        .addComponent(jLabelVendedor2)
+                                        .addGap(86, 86, 86)
+                                        .addComponent(jLabelFecha1))
+                                    .addComponent(jButtonVerVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel27)
+                                    .addComponent(jScrollPane13))
+                                .addGap(37, 37, 37)))
+                        .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonAgregarDevolucion)
+                            .addComponent(jButtonModificarDevolucion)
+                            .addComponent(jButtonEliminarDevolucion))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane14, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 382, Short.MAX_VALUE)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(jButtonVerVentas)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jDateChooserFechaDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabelVendedor2)
+                                    .addComponent(jLabelFecha1))
+                                .addGap(9, 9, 9)
+                                .addComponent(jTextFieldVenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel27)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane14, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jButtonAgregarDevolucion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonModificarDevolucion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonEliminarDevolucion))))
         );
 
         TabClientes.addTab("Devoluciones", jPanel7);
@@ -980,7 +1161,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(BTNEliminaDD, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addContainerGap(302, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1067,7 +1248,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane8)
-                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 745, Short.MAX_VALUE)
+                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 863, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel23)
@@ -1155,12 +1336,12 @@ public class Principal extends javax.swing.JFrame {
             /*case 4://Detalle de Venta
             ConectaDB();
             ActualizaTabla(4);
-            break;
-            case 5://Devolucion
+            break;*/
+            case 4://Devolucion
             ConectaDB();
-            ActualizaTabla(5);
+            ActualizaTabla(4, null);
             break;
-            case 6://Detalle Devolucion
+            /*case 6://Detalle Devolucion
             ConectaDB();
             ActualizaTabla(6);
             break;*/
@@ -1443,6 +1624,10 @@ public class Principal extends javax.swing.JFrame {
             jTextFieldCliente.setText(valores.get(2));
             jTextFieldVendedor.setText(valores.get(1));
             idVenta = Integer.parseInt(valores.get(0));
+            Date fecha = getFecha(valores.get(3));
+            if(fecha != null){
+                jDateChooserFechaVenta.setDate(fecha);
+            }
         }else{
             idVenta = -1;
         }
@@ -1492,6 +1677,122 @@ public class Principal extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButtonEliminarActionPerformed
+
+    private void jButtonVerVentasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonVerVentasMouseClicked
+        // TODO add your handling code here:
+        ActualizaTabla(3, jTableVerVentas);
+    }//GEN-LAST:event_jButtonVerVentasMouseClicked
+
+    private void jTableVerVentasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableVerVentasMouseClicked
+        // TODO add your handling code here:
+        int fila = jTableVerVentas.getSelectedRow();
+        if(fila != -1){
+            int columns = jTableVerVentas.getColumnCount();
+            ArrayList<String> valores = new ArrayList<>();
+            for(int i = 0; i < columns - 1; i++){
+                valores.add(jTableVerVentas.getValueAt(fila, i).toString());
+            }
+            jTextFieldVenta.setText(valores.get(0));
+        }
+        
+    }//GEN-LAST:event_jTableVerVentasMouseClicked
+
+    private void jButtonAgregarDevolucionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarDevolucionActionPerformed
+        // TODO add your handling code here:
+        if(jTextFieldVenta.getText() != "" && jTextAreaMotivo.getText() != ""){
+            Qry = "INSERT INTO Almacen.Devolucion(IdVenta,Motivo,Fecha)"
+                + " VALUES(?,?,?)";
+            Date date = new Date();
+            date = jDateChooserFechaVenta.getDate();
+
+            try{
+                pt = conexion.prepareCall(Qry); 
+                pt.setInt(1,  Integer.parseInt(jTextFieldVenta.getText()));
+                pt.setString(2, jTextAreaMotivo.getText());
+                pt.setDate(3,new java.sql.Date(date.getTime()));//FECHA
+                int registro = pt.executeUpdate(); 
+                ActualizaTabla(4, null);
+            }
+            catch(Exception e)
+            {
+              JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_jButtonAgregarDevolucionActionPerformed
+
+    private void jTableDevolucionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableDevolucionesMouseClicked
+        // TODO add your handling code here:
+        int fila = jTableDevoluciones.getSelectedRow();
+        if(fila != -1){
+            int columns = jTableDevoluciones.getColumnCount();
+            ArrayList<String> valores = new ArrayList<>();
+            for(int i = 0; i < columns - 1; i++){
+                valores.add(jTableDevoluciones.getValueAt(fila, i).toString());
+            }
+            idDevolucion = Integer.parseInt(valores.get(0));
+            jTextFieldVenta.setText(valores.get(1));
+            jTextAreaMotivo.setText(valores.get(2));
+            Date fecha = getFecha(valores.get(3));
+            if(fecha != null){
+                jDateChooserFechaDevolucion.setDate(fecha);
+            }
+        }
+        else{
+            idDevolucion = -1;
+        }
+    }//GEN-LAST:event_jTableDevolucionesMouseClicked
+
+    private Date getFecha(String fecha){
+        SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return formatoDelTexto.parse(fecha);
+        } catch (ParseException ex) {
+            return null;
+        }
+    }
+    private void jButtonModificarDevolucionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificarDevolucionActionPerformed
+        // TODO add your handling code here:
+        if(jTextFieldVenta.getText() != "" && jTextAreaMotivo.getText() != "" && idDevolucion != -1){
+            Qry = "UPDATE Almacen.Devolucion SET"
+                    + " IdVenta = ? ,"
+                    + " Motivo = ? ,"
+                    + " Fecha = ? "
+                    + "WHERE IdDevolucion = ?;";
+            Date date = new Date();
+            date = jDateChooserFechaVenta.getDate();
+            try{
+                pt = conexion.prepareCall(Qry);
+                pt.setInt(1,Integer.parseInt(jTextFieldVenta.getText()));
+                pt.setString(2, jTextAreaMotivo.getText());
+                pt.setDate(3,new java.sql.Date(date.getTime()));//FECHA
+                pt.setInt(4, idDevolucion);
+                int registro = pt.executeUpdate();
+                ActualizaTabla(4, null);
+            }
+            catch(Exception e)
+            {
+              JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        }
+        
+    }//GEN-LAST:event_jButtonModificarDevolucionActionPerformed
+
+    private void jButtonEliminarDevolucionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarDevolucionActionPerformed
+        // TODO add your handling code here:
+        if(jTextFieldVenta.getText() != "" && jTextAreaMotivo.getText() != "" && idDevolucion != -1){
+            Qry = "DELETE FROM Almacen.Devolucion WHERE IdDevolucion = ?";
+            try{
+                pt = conexion.prepareCall(Qry);
+                pt.setInt(1, idDevolucion);
+                int registro = pt.executeUpdate();
+                ActualizaTabla(4, null);   
+            }
+            catch(Exception e)
+            {
+                JOptionPane.showMessageDialog(this, "No se Elimino " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_jButtonEliminarDevolucionActionPerformed
 
    
     /**
@@ -1573,10 +1874,15 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButtonAgregar;
+    private javax.swing.JButton jButtonAgregarDevolucion;
     private javax.swing.JButton jButtonEliminar;
+    private javax.swing.JButton jButtonEliminarDevolucion;
     private javax.swing.JButton jButtonModificar;
+    private javax.swing.JButton jButtonModificarDevolucion;
     private javax.swing.JButton jButtonVerClientes;
     private javax.swing.JButton jButtonVerVendedores;
+    private javax.swing.JButton jButtonVerVentas;
+    private com.toedter.calendar.JDateChooser jDateChooserFechaDevolucion;
     private com.toedter.calendar.JDateChooser jDateChooserFechaVenta;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -1597,6 +1903,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1605,8 +1912,10 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelFecha;
+    private javax.swing.JLabel jLabelFecha1;
     private javax.swing.JLabel jLabelVendedor;
     private javax.swing.JLabel jLabelVendedor1;
+    private javax.swing.JLabel jLabelVendedor2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1617,6 +1926,9 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
+    private javax.swing.JScrollPane jScrollPane12;
+    private javax.swing.JScrollPane jScrollPane13;
+    private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -1627,15 +1939,19 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
+    private javax.swing.JTable jTableDevoluciones;
     private javax.swing.JTable jTableVentas;
     private javax.swing.JTable jTableVer;
+    private javax.swing.JTable jTableVerVentas;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextAreaMotivo;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextFieldCliente;
     private javax.swing.JTextField jTextFieldVendedor;
+    private javax.swing.JTextField jTextFieldVenta;
     private com.toedter.calendar.JMonthChooser mesC;
     private com.toedter.calendar.JMonthChooser mesV;
     // End of variables declaration//GEN-END:variables
