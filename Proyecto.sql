@@ -240,6 +240,31 @@ SELECT * FROM Transaccion.Cliente;
 DROP TRIGGER triGen_edad ON Almacen.Vendedor;
 DROP FUNCTION EdadAPersona();
 
+DROP FUNCTION CalculaTotal();
+
+------Trigger Total---------
+CREATE FUNCTION CalculaTotal()
+RETURNS TRIGGER AS
+$$
+DECLARE 
+	Total INTEGER; 
+BEGIN
+	
+	IF TG_OP = 'INSERT' THEN
+		SELECT SUM(Subtotal) INTO Total FROM Transaccion.DetalleVenta WHERE IdVenta = NEW.IdVenta GROUP BY IdVenta;
+		UPDATE Transaccion.Venta SET Total = Total WHERE IdVenta = NEW.IdVenta; 
+	ELSEIF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+		SELECT SUM(Subtotal) INTO Total FROM Transaccion.DetalleVenta WHERE IdVenta = OLD.IdVenta GROUP BY IdVenta;
+		UPDATE Transaccion.Venta SET Total = Total WHERE IdVenta = OLD.IdVenta; 
+	END IF;	
+END
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_total AFTER INSERT OR UPDATE OR DELETE
+ON Transaccion.DetalleVenta FOR EACH ROW
+EXECUTE PROCEDURE CalculaTotal();
+----Fin Trigger Subtotal-----
 
 /*********************/
 ------Trigger Subtotal------
@@ -294,3 +319,5 @@ GRANT INSERT,UPDATE,DELETE ON Almacen.DetalleDevolucion,Almacen.Devolucion TO Em
 
 DROP USER Administrador;
 DROP OWNED BY Administrador;
+
+
