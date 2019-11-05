@@ -113,7 +113,7 @@ CREATE TABLE Almacen.Devolucion
 	CONSTRAINT FK_VENTA4 FOREIGN KEY(IdProducto) REFERENCES Almacen.Producto(IdProducto)
  );
 
-INSERT INTO Almacen.Vendedor (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Juanhgfds','DLJBKBKB','JH@jhgBOSI','7866125678','05/10/1994')
+INSERT INTO Almacen.Vendedor (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Juanhgfds','DLJBKBKB','JH@jaBOSI','7866125678','05/10/1994')
 INSERT INTO Transaccion.Cliente (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('DIEGO','DLJBKBKB','JH@BKHBKB','7866125678','05/10/1996')
 INSERT INTO Almacen.TipoProducto(Nombre,Descripcion) VALUES ('PRUEBA','Alamo 22');
 INSERT INTO Transaccion.Venta  (IdCliente,IdVendedor,Fecha) VALUES (1,1,'13/10/2019')
@@ -194,43 +194,30 @@ EXECUTE PROCEDURE tr_stock_articulo_almacen2();
 CREATE OR REPLACE FUNCTION EdadAPersona()
   RETURNS TRIGGER AS
 $$
-    DECLARE 
+DECLARE
+	Edad INTEGER := 0;
 BEGIN
-	IF TG_OP = 'INSERT' THEN
-		UPDATE Almacen.Vendedor SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = NEW.IdVendedor;
-	ELSEIF TG_OP = 'UPDATE' THEN
-		UPDATE Almacen.Vendedor SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = OLD.IdVendedor;
-		UPDATE Almacen.Vendedor SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdVendedor = NEW.IdVendedor;
-	END IF;
-	RETURN NULL;
+	SELECT EXTRACT(YEAR FROM AGE(NEW.fechanac)) INTO Edad;
+	NEW.edad := Edad;
+	RETURN NEW;
 END;
 $$
   LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION EdadAPersona2()
-  RETURNS TRIGGER AS
-$$
-    DECLARE 
-BEGIN
-	IF TG_OP = 'INSERT' THEN
-		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = NEW.IdCliente;
-	ELSEIF TG_OP = 'UPDATE' THEN
-		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = OLD.IdCliente;
-		UPDATE Transaccion.Cliente SET Edad = (SELECT EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM NEW.FechaNac)) WHERE IdCliente = NEW.IdCliente;
-	END IF;
-	RETURN NULL;
-END;
-$$
-  LANGUAGE plpgsql;
-
 		
-CREATE TRIGGER triGen_edad AFTER INSERT OR UPDATE 
+CREATE TRIGGER triggerEdadVendedor BEFORE INSERT OR UPDATE 
 ON Almacen.Vendedor FOR EACH ROW
 EXECUTE PROCEDURE EdadAPersona();
 
-CREATE TRIGGER triGen_edad AFTER INSERT OR UPDATE 
+CREATE TRIGGER triggerEdadCliente BEFORE INSERT OR UPDATE 
 ON Transaccion.Cliente FOR EACH ROW
-EXECUTE PROCEDURE EdadAPersona2();
+EXECUTE PROCEDURE EdadAPersona();
+
+---- Ejecutar esto y después insertar los trigger ---
+--DROP TRIGGER triGen_edad ON Transaccion.Cliente;
+--DROP FUNCTION EdadAPersona();
+
+--DROP TRIGGER triGen_edad ON Almacen.Vendedor;
+--DROP FUNCTION EdadAPersona2();
 
 INSERT INTO Almacen.Vendedor (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');
 INSERT INTO Transaccion.Cliente(Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');
@@ -320,4 +307,9 @@ GRANT INSERT,UPDATE,DELETE ON Almacen.DetalleDevolucion,Almacen.Devolucion TO Em
 DROP USER Administrador;
 DROP OWNED BY Administrador;
 
+SELECT * FROM Almacen.Vendedor;
+SELECT * FROM Transaccion.Cliente;
+SELECT EXTRACT(YEAR FROM AGE(v.fechanac)) FROM Almacen.Vendedor v
+INSERT INTO Almacen.Vendedor (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Juanhgfds','DLJBKBKB','JHa@jsaBsOSI','7866125678','05/10/1994');
+INSERT INTO Transaccion.Cliente(Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfaase','78665678','05/10/1996');
 
