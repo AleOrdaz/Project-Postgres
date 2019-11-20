@@ -266,15 +266,6 @@ EXECUTE PROCEDURE EdadAPersona();
 
 INSERT INTO Almacen.Vendedor (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');
 INSERT INTO Transaccion.Cliente(Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');
-
-SELECT * FROM Almacen.Producto;
-SELECT * FROM Almacen.TipoProducto;
-SELECT * FROM Transaccion.DetalleVenta;
-|															
-
-INSERT INTO Almacen.Producto (IdTipoProducto, Stock, Tamaño, Precio) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');
-INSERT INTO Almacen.Producto (IdTipoProducto, Stock, Tamaño, Precio) VALUES ('1','35','Individual', 100);
-
 SELECT * FROM Almacen.Vendedor;
 SELECT * FROM Transaccion.Cliente;
 
@@ -284,62 +275,51 @@ DROP FUNCTION EdadAPersona();
 
 /*********************/
 ----------------------Trigger Total--------------------
-CREATE OR REPLACE FUNCTION CalculaTotal()
+CREATE FUNCTION CalculaTotal()
 RETURNS TRIGGER AS
 $$
 DECLARE 
-	vTotal FLOAT := 0.0; 
+	Total INTEGER; 
 BEGIN
-	IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-		SELECT SUM(d.Subtotal) INTO vTotal FROM Transaccion.DetalleVenta d WHERE d.IdVenta = NEW.IdVenta;
-		UPDATE Transaccion.Venta v SET Total = vTotal WHERE IdVenta = NEW.IdVenta; 
-	ELSEIF TG_OP = 'DELETE' THEN
-		SELECT SUM(d.Subtotal) INTO vTotal FROM Transaccion.DetalleVenta d WHERE d.IdVenta = OLD.IdVenta;
-		UPDATE Transaccion.Venta SET Total = vTotal WHERE IdVenta = OLD.IdVenta; 
-	END IF;
-	RETURN NULL;
+	
+	IF TG_OP = 'INSERT' THEN
+		SELECT SUM(Subtotal) INTO Total FROM Transaccion.DetalleVenta WHERE IdVenta = NEW.IdVenta GROUP BY IdVenta;
+		UPDATE Transaccion.Venta SET Total = Total WHERE IdVenta = NEW.IdVenta; 
+	ELSEIF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+		SELECT SUM(Subtotal) INTO Total FROM Transaccion.DetalleVenta WHERE IdVenta = OLD.IdVenta GROUP BY IdVenta;
+		UPDATE Transaccion.Venta SET Total = Total WHERE IdVenta = OLD.IdVenta; 
+	END IF;	
 END
 $$
 LANGUAGE plpgsql;
 
-SELECT SUM(d.Subtotal) FROM Transaccion.DetalleVenta d WHERE d.IdVenta = 1;
-
-
-CREATE TRIGGER trigger_Total AFTER INSERT OR UPDATE OR DELETE
+CREATE TRIGGER trigger_total AFTER INSERT OR UPDATE OR DELETE
 ON Transaccion.DetalleVenta FOR EACH ROW
 EXECUTE PROCEDURE CalculaTotal();
 
 
-
 /*********************/
 ------Trigger Subtotal------
-CREATE OR REPLACE FUNCTION CalculaSubtotal()
+CREATE FUNCTION CalculaSubtotal()
   RETURNS TRIGGER AS
 $$
-    DECLARE Subtotal FLOAT := 0.0;
+    DECLARE 
 BEGIN
-	SELECT p.precio INTO Subtotal FROM Almacen.Producto p WHERE p.idproducto = NEW.idproducto;
-	NEW.subtotal := Subtotal * NEW.cantidad;
-	return NEW;
+	IF TG_OP = 'INSERT' THEN
+		UPDATE Transaccion.DetalleVenta SET Subtotal = Subtotal + (NEW.cantidad ) WHERE IdDevolucion = NEW.IdDevolucion;
+ 
+	ELSEIF TG_OP = 'UPDATE' THEN
+		UPDATE Transaccion.DetalleVenta SET Subtotal = Subtotal - (OLD.cantidad ) WHERE IdDevolucion = OLD.IdDevolucion;
+ 
+	ELSEIF TG_OP = 'DELETE' THEN
+		UPDATE Transaccion.DetalleVenta SET Subtotal = Subtotal - (OLD.cantidad ) WHERE IdDevolucion = OLD.IdDevolucion;
+	END IF;
+ 
+	RETURN NULL;
 END
 $$
 LANGUAGE plpgsql;
-
-DROP TRIGGER trigger_Subtotal ON Transaccion.DetalleVenta;
-
-CREATE TRIGGER trigger_Subtotal BEFORE INSERT OR UPDATE
-ON Transaccion.DetalleVenta FOR EACH ROW
-EXECUTE PROCEDURE CalculaSubtotal();
-
-INSERT INTO Transaccion.DetalleVenta(IdVenta, IdProducto, Cantidad) VALUES ('1','2',15);
-UPDATE Transaccion.DetalleVenta SET Cantidad = 16  WHERE Cantidad = 10;
-DELETE FROM Transaccion.DetalleVenta WHERE Cantidad = 16;
-
-SELECT * FROM Almacen.Producto;
-SELECT * FROM Almacen.TipoProducto;
-SELECT * FROM Transaccion.Venta;
-SELECT * FROM Transaccion.DetalleVenta;	
-						     
+												     
 /**************************************************************usuarios************************/
 CREATE USER Administrador WITH LOGIN ENCRYPTED PASSWORD '123';
 GRANT CONNECT ON DATABASE "Proyecto" TO Administrador;

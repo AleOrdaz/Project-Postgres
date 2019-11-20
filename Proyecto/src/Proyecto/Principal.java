@@ -45,7 +45,6 @@ public class Principal extends javax.swing.JFrame {
         initComponents();
         tipousuario=nombre;
         claveu=clave;
-        usuario = Usuario.getText();
         ConectaDB();
         ActualizaTabla(0, TablaClientes);
         seleccionado = false;
@@ -89,6 +88,12 @@ public class Principal extends javax.swing.JFrame {
     public void ActualizaTabla(int AT, JTable tabla){
          switch(AT){
             case 0:
+                if("empleado".equals(tipousuario))
+                {
+                    BtnAgregarCliente.setVisible(false);
+                    BtnModificar.setVisible(false);
+                    BtnEliminar.setVisible(false);
+                }
                 modelo = new DefaultTableModel();
                 modelo.addColumn("ID");
                 modelo.addColumn("Nombre");
@@ -120,6 +125,12 @@ public class Principal extends javax.swing.JFrame {
                 }
             break;
             case 1:
+                if("empleado".equals(tipousuario))
+                {
+                    BtnAgregarVendedor.setVisible(false);
+                    BtnModificaVendedor.setVisible(false);
+                    BtnEliminarVendedor.setVisible(false);
+                }
                 modelo = new DefaultTableModel();
                 modelo.addColumn("ID");
                 modelo.addColumn("Nombre");
@@ -151,6 +162,24 @@ public class Principal extends javax.swing.JFrame {
                 }
             break;
             case 2:
+                if("gerente".equals(tipousuario))
+                {
+                    BTNAgregarTipoProd.setVisible(false);
+                    BTNModificarTipoProd.setVisible(false);
+                    BTNEliminarTipoProd.setVisible(false);
+                    BTNAgregarProd.setVisible(false);
+                    BTNModificaProd.setVisible(false);
+                    BTNEliminaProd.setVisible(false);
+                }
+                else if("empleado".equals(tipousuario))
+                {
+                    BTNAgregarTipoProd.setVisible(false);
+                    BTNModificarTipoProd.setVisible(false);
+                    BTNEliminarTipoProd.setVisible(false);
+                    BTNAgregarProd.setVisible(false);
+                    BTNModificaProd.setVisible(false);
+                    BTNEliminaProd.setVisible(false);
+                }
                 modelo = new DefaultTableModel();
                 modelo.addColumn("ID");
                 modelo.addColumn("Nombre");
@@ -240,7 +269,7 @@ public class Principal extends javax.swing.JFrame {
                     javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
                 }
                 break;
-                case 5:
+            case 5:
                 modelo = new DefaultTableModel();
                 modelo.addColumn("IdProducto");
                 modelo.addColumn("IdTipoProducto");
@@ -294,7 +323,6 @@ public class Principal extends javax.swing.JFrame {
         BtnAgregarCliente = new javax.swing.JButton();
         BtnModificar = new javax.swing.JButton();
         BtnEliminar = new javax.swing.JButton();
-        Usuario = new javax.swing.JTextField();
         diaC = new com.toedter.components.JSpinField();
         mesC = new com.toedter.calendar.JMonthChooser();
         añoC = new com.toedter.calendar.JYearChooser();
@@ -326,8 +354,6 @@ public class Principal extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         TextNombreP = new javax.swing.JTextField();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         TextIdTP = new javax.swing.JTextField();
@@ -344,6 +370,7 @@ public class Principal extends javax.swing.JFrame {
         BTNAgregarProd = new javax.swing.JButton();
         BTNModificaProd = new javax.swing.JButton();
         BTNEliminaProd = new javax.swing.JButton();
+        Descripcion = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane10 = new javax.swing.JScrollPane();
         jTableVer = new javax.swing.JTable();
@@ -478,10 +505,6 @@ public class Principal extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addComponent(Usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -549,9 +572,7 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(BtnModificar)
                     .addComponent(BtnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BtnAgregarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
-                .addComponent(Usuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46))
+                .addGap(75, 75, 75))
         );
 
         TabClientes.addTab("Clientes", jPanel1);
@@ -741,10 +762,6 @@ public class Principal extends javax.swing.JFrame {
 
         jLabel12.setText("Productos");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane6.setViewportView(jTextArea1);
-
         jLabel13.setText("Nombre");
 
         jLabel14.setText("Descripción");
@@ -845,23 +862,27 @@ public class Principal extends javax.swing.JFrame {
                 .addGap(26, 26, 26)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(jLabel13)
-                                .addGap(18, 18, 18)
-                                .addComponent(TextNombreP))
-                            .addComponent(jLabel14)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(29, 29, 29)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(BTNAgregarTipoProd, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(BTNEliminarTipoProd, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(BTNModificarTipoProd, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(29, 29, 29)
+                                .addComponent(TextNombreP, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(Descripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel12)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(BTNAgregarTipoProd, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(46, 46, 46)
+                                .addComponent(BTNModificarTipoProd, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(55, 55, 55)
+                                .addComponent(BTNEliminarTipoProd, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(25, Short.MAX_VALUE))))
         );
         jPanel5Layout.setVerticalGroup(
@@ -869,26 +890,24 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(TextNombreP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel13))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel14)
+                            .addComponent(Descripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(BTNAgregarTipoProd)
+                            .addComponent(BTNModificarTipoProd)
+                            .addComponent(BTNEliminarTipoProd)))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(TextNombreP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel13))
-                            .addComponent(BTNAgregarTipoProd))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(BTNModificarTipoProd)
-                                .addGap(18, 18, 18)
-                                .addComponent(BTNEliminarTipoProd)))))
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
@@ -1920,16 +1939,15 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonEliminarDevolucionActionPerformed
 
     private void BTNAgregarTipoProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNAgregarTipoProdActionPerformed
-        if(TextNombreP.getText() != "" && jTextArea1.getText() != "" && idTipoProd != -1){
+        if(TextNombreP.getText() != "" && Descripcion.getText() != "" && idTipoProd != -1){
             Qry = "INSERT INTO Almacen.TipoProducto(Nombre,Descripcion) VALUES(?,?)";
 
             try{
                 pt = conexion.prepareCall(Qry); 
                 pt.setString(1, TextNombreP.getText());
-                pt.setString(2, jTextArea1.getText());//FECHA
+                pt.setString(2, Descripcion.getText());//FECHA
                 int registro = pt.executeUpdate();
                 ActualizaTabla(2, null);
-                TextIdTP.enable(true);
             }
             catch(Exception e)
             {
@@ -1943,7 +1961,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_BTNAgregarTipoProdActionPerformed
 
     private void BTNModificarTipoProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNModificarTipoProdActionPerformed
-        if(TextNombreP.getText() != "" && jTextArea1.getText() != "" && idTipoProd != -1){
+        if(TextNombreP.getText() != "" && Descripcion.getText() != "" && idTipoProd != -1){
             Qry = "UPDATE Almacen.TipoProducto SET"
                     + " Nombre = ? ,"
                     + " Descripcion "
@@ -1951,7 +1969,7 @@ public class Principal extends javax.swing.JFrame {
             try{
                 pt = conexion.prepareCall(Qry);
                 pt.setString(1, TextNombreP.getText());
-                pt.setString(2, jTextArea1.getText());
+                pt.setString(2, Descripcion.getText());
                 pt.setInt(3, idTipoProd);
                 int registro = pt.executeUpdate();
                 ActualizaTabla(2, null);
@@ -2019,13 +2037,13 @@ public class Principal extends javax.swing.JFrame {
         if(fila != -1){
             int columns = TablaTiposProductos.getColumnCount();
             ArrayList<String> valores = new ArrayList<>();
-            for(int i = 0; i < columns - 1; i++){
+            for(int i = 0; i < columns; i++){
                 valores.add(TablaTiposProductos.getValueAt(fila, i).toString());
             }
             idTipoProd = Integer.parseInt(valores.get(0));
             TextIdTP.setText(valores.get(0));
             TextNombreP.setText(valores.get(1));
-            jTextArea1.setText(valores.get(2).toString());
+            Descripcion.setText(valores.get(2));
             ActualizaTabla(5, null);
         }
         else{
@@ -2150,6 +2168,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton BtnModificaVendedor;
     private javax.swing.JButton BtnModificar;
     private javax.swing.JComboBox<String> ComboTamaño;
+    private javax.swing.JTextField Descripcion;
     private javax.swing.JTabbedPane TabClientes;
     private javax.swing.JTable TablaClientes;
     private javax.swing.JTable TablaDetalleV;
@@ -2171,7 +2190,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTextField TextStock;
     private javax.swing.JTextField TextTelefono;
     private javax.swing.JTextField TextTelefonoV;
-    public static javax.swing.JTextField Usuario;
     public static javax.swing.JTextField Usuario1;
     public static javax.swing.JTextField Usuario2;
     private com.toedter.calendar.JYearChooser añoC;
@@ -2238,7 +2256,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
@@ -2246,7 +2263,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable jTableVentas;
     private javax.swing.JTable jTableVer;
     private javax.swing.JTable jTableVerVentas;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextAreaMotivo;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
