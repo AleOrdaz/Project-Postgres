@@ -44,7 +44,7 @@ public class Login extends javax.swing.JFrame {
             //conexion = DriverManager.getConnection(URL, "postgres","postgres");
             if(conexion != null){
                 band=true;
-                javax.swing.JOptionPane.showMessageDialog(this, "Conexión exitosa");
+                //javax.swing.JOptionPane.showMessageDialog(this, "Conexión exitosa");
             }
         }
         catch(Exception e) {
@@ -148,19 +148,19 @@ public class Login extends javax.swing.JFrame {
         usuariou=TFUsuario.getText();
         clave=new String (jPassword.getPassword());
         ConectaDB();
-        if("administrador".equals(TFUsuario.getText()) && band== true){
+        if("administrador".equals(TFUsuario.getText()) && "123".equals(clave) && band== true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
             nombre = "administrador";
         } 
-        else if("gerente".equals(TFUsuario.getText())&& band==true){
+        else if("gerente".equals(TFUsuario.getText()) && "123".equals(clave) && band==true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
             nombre = "gerente";
         }
-        else if("empleado".equals(TFUsuario.getText())&& band==true){
+        else if("empleado".equals(TFUsuario.getText()) && "123".equals(clave) && band==true){
             Principal p = new Principal(TFUsuario.getText(),new String (jPassword.getPassword()));
             p.setVisible(true);
             this.setVisible(false);
@@ -168,7 +168,6 @@ public class Login extends javax.swing.JFrame {
         }
         else
             javax.swing.JOptionPane.showMessageDialog(this, "El usuario o contraseña son incorrectos ");
-        //Principal.Usuario.setText(TFUsuario.getText());
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

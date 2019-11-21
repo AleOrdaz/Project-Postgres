@@ -191,7 +191,7 @@ EXECUTE PROCEDURE tr_stock_articulo_almacen2();
 
 /*********************/
 -----Trigger Edad
-CREATE OR REPLACE FUNCTION EdadAPersona()
+/*CREATE OR REPLACE FUNCTION EdadAPersona()
   RETURNS TRIGGER AS
 $$
     DECLARE 
@@ -230,10 +230,10 @@ EXECUTE PROCEDURE EdadAPersona();
 
 CREATE TRIGGER triGen_edad AFTER INSERT OR UPDATE 
 ON Transaccion.Cliente FOR EACH ROW
-EXECUTE PROCEDURE EdadAPersona2();
+EXECUTE PROCEDURE EdadAPersona2();*/
 
 /*********************/
-/*
+
 -----Trigger Edad
 CREATE OR REPLACE FUNCTION EdadAPersona()
   RETURNS TRIGGER AS
@@ -257,12 +257,12 @@ ON Transaccion.Cliente FOR EACH ROW
 EXECUTE PROCEDURE EdadAPersona();
 
 ---- Ejecutar esto y después insertar los trigger ---
---DROP TRIGGER triGen_edad ON Transaccion.Cliente;
---DROP FUNCTION EdadAPersona();
+DROP TRIGGER triGen_edad ON Transaccion.Cliente;
+DROP FUNCTION EdadAPersona();
 
---DROP TRIGGER triGen_edad ON Almacen.Vendedor;
---DROP FUNCTION EdadAPersona2();
-*/
+DROP TRIGGER triGen_edad ON Almacen.Vendedor;
+DROP FUNCTION EdadAPersona2();
+
 
 INSERT INTO Almacen.Vendedor (Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');
 INSERT INTO Transaccion.Cliente(Nombre,Domicilio,Email,Telefono,FechaNac) VALUES ('Alejnadro','Salvadro','ya@dfsfse','78665678','05/10/1996');

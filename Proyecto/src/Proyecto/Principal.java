@@ -16,6 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -1513,8 +1515,18 @@ public class Principal extends javax.swing.JFrame {
             pt.setString(3, TextEmailV.getText());
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
-            int registro = pt.executeUpdate();
+            // Patrón para validar el email
+            Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+            Matcher mather = pattern.matcher(TextEmail.getText());
+
+            if (mather.find() == true){
+                int registro = pt.executeUpdate();
             ActualizaTabla(1, TablaVendedor);
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "El correo es invalido");
+            }
         }
         catch(Exception e)
         {
@@ -1566,10 +1578,19 @@ public class Principal extends javax.swing.JFrame {
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
             pt.setInt(6, id);
-            int registro = pt.executeUpdate();
-            if(registro > 0)
-            {
-                ActualizaTabla(0, TablaClientes);
+            // Patrón para validar el email
+            Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+            Matcher mather = pattern.matcher(TextEmail.getText());
+
+            if (mather.find() == true){
+                int registro = pt.executeUpdate();
+                if(registro > 0){
+                    ActualizaTabla(0, TablaClientes);
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "El correo es invalido");
             }
         }
         catch(Exception e)
@@ -1597,8 +1618,18 @@ public class Principal extends javax.swing.JFrame {
             pt.setString(3, TextEmail.getText());
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
-            int registro = pt.executeUpdate();
-            ActualizaTabla(0, TablaClientes);
+            // Patrón para validar el email
+            Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+            Matcher mather = pattern.matcher(TextEmail.getText());
+
+            if (mather.find() == true){
+                int registro = pt.executeUpdate();
+                ActualizaTabla(0, TablaClientes);
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "El correo es invalido");
+            }
         }
         catch(Exception e)
         {
@@ -1653,10 +1684,19 @@ public class Principal extends javax.swing.JFrame {
             pt.setInt(4,Integer.parseInt(Aux));
             pt.setDate(5,new java.sql.Date(date.getTime()));//FECHA
             pt.setInt(6, id);
-            int registro = pt.executeUpdate();
-            if(registro > 0)
-            {
-                ActualizaTabla(1, TablaVendedor);
+            // Patrón para validar el email
+            Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+            Matcher mather = pattern.matcher(TextEmail.getText());
+
+            if (mather.find() == true){
+                int registro = pt.executeUpdate();
+                if(registro > 0) {
+                    ActualizaTabla(1, TablaVendedor);
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "El correo es invalido");
             }
         }
         catch(Exception e)
@@ -2014,10 +2054,10 @@ public class Principal extends javax.swing.JFrame {
 
             try{
                 pt = conexion.prepareCall(Qry); 
-                pt.setInt(1, Integer.parseInt(TextIdTP.getText()));
-                pt.setInt(2, Integer.parseInt(TextPrecio.getText()));
-                pt.setInt(3, Integer.parseInt(TextStock.getText()));
-                pt.setString(4, ComboTamaño.getSelectedItem().toString());
+                pt.setInt(1, Integer.parseInt(TextIdTP.getText()));   
+                pt.setInt(2, Integer.parseInt(TextStock.getText()));
+                pt.setString(3, ComboTamaño.getSelectedItem().toString());
+                pt.setFloat(4, Float.parseFloat(TextPrecio.getText()));
                 int registro = pt.executeUpdate(); 
                 ActualizaTabla(5, null);
             }
