@@ -48,7 +48,6 @@ public class Principal extends javax.swing.JFrame {
         tipousuario=nombre;
         claveu=clave;
         ConectaDB();
-        ActualizaTabla(0, TablaClientes);
         seleccionado = false;
     }
     
@@ -62,7 +61,8 @@ public class Principal extends javax.swing.JFrame {
             {
                 conexion = DriverManager.getConnection(URL, "administrador","123");
                 if(conexion != null)
-                {   
+                { 
+                    ActualizaTabla(0, TablaClientes);
                 }
             }
             else if("gerente".equals(tipousuario))
@@ -70,6 +70,7 @@ public class Principal extends javax.swing.JFrame {
                 conexion = DriverManager.getConnection(URL, "gerente","123");
                 if(conexion != null)
                 {   
+                    ActualizaTabla(0, TablaClientes);
                 }
             }
             else if("empleado".equals(tipousuario))
@@ -77,6 +78,7 @@ public class Principal extends javax.swing.JFrame {
                 conexion = DriverManager.getConnection(URL, "empleado","123");
                 if(conexion != null)
                 {   
+                    ActualizaTabla(0, TablaClientes);
                 }
             }
             //conexion = DriverManager.getConnection(URL, tipousuario, claveu);
@@ -123,7 +125,6 @@ public class Principal extends javax.swing.JFrame {
                     tabla.setModel(modelo);
                 }
                 catch(Exception e){
-                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
                 }
             break;
             case 1:
@@ -160,7 +161,7 @@ public class Principal extends javax.swing.JFrame {
                     tabla.setModel(modelo);
                 }
                 catch(Exception e){
-                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Vendedor");
                 }
             break;
             case 2:
@@ -206,7 +207,7 @@ public class Principal extends javax.swing.JFrame {
                     }
                 }
                 catch(Exception e){
-                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Producto");
                 }
             break;
             case 3:
@@ -237,7 +238,7 @@ public class Principal extends javax.swing.JFrame {
                     }
                 }
                 catch(SQLException e){
-                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Venta");
                 }
             break;
             case 4:
@@ -268,7 +269,7 @@ public class Principal extends javax.swing.JFrame {
                     }
                 }
                 catch(SQLException e){
-                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Devolucion");
                 }
                 break;
             case 5:
@@ -299,7 +300,7 @@ public class Principal extends javax.swing.JFrame {
                     }
                 }
                 catch(SQLException e){
-                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Actualizacion");
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error al Conectar con tabla en Productos no tipo");
                 }
                 break;
         }

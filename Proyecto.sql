@@ -247,6 +247,19 @@ BEGIN
 END;
 $$
   LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION EdadAPersona2()
+  RETURNS TRIGGER AS
+$$
+DECLARE
+	Edad INTEGER := 0;
+BEGIN
+	SELECT EXTRACT(YEAR FROM AGE(NEW.fechanac)) INTO Edad;
+	NEW.edad := Edad;
+	RETURN NEW;
+END;
+$$
+  LANGUAGE plpgsql;
 		
 CREATE TRIGGER triggerEdadVendedor BEFORE INSERT OR UPDATE 
 ON Almacen.Vendedor FOR EACH ROW
@@ -254,10 +267,10 @@ EXECUTE PROCEDURE EdadAPersona();
 
 CREATE TRIGGER triggerEdadCliente BEFORE INSERT OR UPDATE 
 ON Transaccion.Cliente FOR EACH ROW
-EXECUTE PROCEDURE EdadAPersona();
+EXECUTE PROCEDURE EdadAPersona2();
 
 ---- Ejecutar esto y después insertar los trigger ---
-DROP TRIGGER triGen_edad ON Transaccion.Cliente;
+DROP TRIGGER triggerEdadCliente ON Transaccion.Cliente;
 DROP FUNCTION EdadAPersona();
 
 DROP TRIGGER triGen_edad ON Almacen.Vendedor;
