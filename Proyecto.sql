@@ -288,20 +288,20 @@ DROP FUNCTION EdadAPersona();
 
 /*********************/
 ----------------------Trigger Total--------------------
-CREATE FUNCTION CalculaTotal()
-RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION calculatotal()
+  RETURNS trigger AS
 $$
 DECLARE 
-	Total INTEGER; 
+	vTotal FLOAT := 0.0; 
 BEGIN
-	
-	IF TG_OP = 'INSERT' THEN
-		SELECT SUM(Subtotal) INTO Total FROM Transaccion.DetalleVenta WHERE IdVenta = NEW.IdVenta GROUP BY IdVenta;
-		UPDATE Transaccion.Venta SET Total = Total WHERE IdVenta = NEW.IdVenta; 
-	ELSEIF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
-		SELECT SUM(Subtotal) INTO Total FROM Transaccion.DetalleVenta WHERE IdVenta = OLD.IdVenta GROUP BY IdVenta;
-		UPDATE Transaccion.Venta SET Total = Total WHERE IdVenta = OLD.IdVenta; 
-	END IF;	
+	IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+		SELECT SUM(d.Subtotal) INTO vTotal FROM Transaccion.DetalleVenta d WHERE d.IdVenta = NEW.IdVenta;
+		UPDATE Transaccion.Venta v SET Total = vTotal WHERE IdVenta = NEW.IdVenta; 
+	ELSEIF TG_OP = 'DELETE' THEN
+		SELECT SUM(d.Subtotal) INTO vTotal FROM Transaccion.DetalleVenta d WHERE d.IdVenta = OLD.IdVenta;
+		UPDATE Transaccion.Venta SET Total = vTotal WHERE IdVenta = OLD.IdVenta; 
+	END IF;
+	RETURN NULL;
 END
 $$
 LANGUAGE plpgsql;
@@ -313,25 +313,71 @@ EXECUTE PROCEDURE CalculaTotal();
 
 /*********************/
 ------Trigger Subtotal------
-CREATE FUNCTION CalculaSubtotal()
-  RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION calculasubtotal()
+RETURNS trigger AS
 $$
-    DECLARE 
+DECLARE 
+	Subtotal FLOAT := 0.0;
 BEGIN
+	SELECT p.precio INTO Subtotal FROM Almacen.Producto p WHERE p.idproducto = NEW.idproducto;
+	NEW.subtotal := Subtotal * NEW.cantidad;
+	return NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_subtotal
+  BEFORE INSERT OR UPDATE
+  ON transaccion.detalleventa
+  FOR EACH ROW
+  EXECUTE PROCEDURE calculasubtotal();
+----------------------Trigger Total Devolucion--------------------
+CREATE OR REPLACE FUNCTION CalculaTotalDevolucion()
+RETURNS TRIGGER AS
+$$
+DECLARE 
+	_Total FLOAT:=0; 
+BEGIN
+	
 	IF TG_OP = 'INSERT' THEN
-		UPDATE Transaccion.DetalleVenta SET Subtotal = Subtotal + (NEW.cantidad ) WHERE IdDevolucion = NEW.IdDevolucion;
- 
-	ELSEIF TG_OP = 'UPDATE' THEN
-		UPDATE Transaccion.DetalleVenta SET Subtotal = Subtotal - (OLD.cantidad ) WHERE IdDevolucion = OLD.IdDevolucion;
- 
-	ELSEIF TG_OP = 'DELETE' THEN
-		UPDATE Transaccion.DetalleVenta SET Subtotal = Subtotal - (OLD.cantidad ) WHERE IdDevolucion = OLD.IdDevolucion;
-	END IF;
- 
+		SELECT SUM(Subtotal) INTO _Total FROM Almacen.DetalleDevolucion WHERE IdDevolucion = NEW.IdDevolucion GROUP BY IdDevolucion;
+		UPDATE Almacen.Devolucion SET Total = _Total WHERE IdDevolucion = NEW.IdDevolucion; 
+	ELSEIF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+		SELECT SUM(Subtotal) INTO _Total FROM Almacen.DetalleDevolucion WHERE IdDevolucion = NEW.IdDevolucion GROUP BY IdDevolucion;
+		UPDATE Almacen.Devolucion SET Total = _Total WHERE IdDevolucion = NEW.IdDevolucion;  
+	END IF;	
 	RETURN NULL;
 END
 $$
 LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_total_devolucion AFTER INSERT OR UPDATE OR DELETE
+ON Almacen.DetalleDevolucion FOR EACH ROW
+EXECUTE PROCEDURE CalculaTotalDevolucion();
+
+--SELECT * FROM Almacen.Producto;
+--SELECT * FROM Almacen.Devolucion;
+--SELECT * FROM Almacen.DetalleDevolucion;
+--INSERT INTO Almacen.DetalleDevolucion(iddevolucion, idproducto, cantidad) VALUES (2, 4, 10);
+------Trigger Subtotal------
+CREATE OR REPLACE FUNCTION calculasubtotaldevolucion()
+RETURNS trigger AS
+$$
+DECLARE 
+	Subtotal FLOAT := 0.0;
+BEGIN
+	SELECT p.precio INTO Subtotal FROM Almacen.Producto p WHERE p.idproducto = NEW.idproducto;
+	NEW.subtotal := Subtotal * NEW.cantidad;
+	return NEW;
+END
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_subtotal_devolucion
+  BEFORE INSERT OR UPDATE
+  ON Almacen.DetalleDevolucion
+  FOR EACH ROW
+  EXECUTE PROCEDURE calculasubtotaldevolucion();
 												     
 /**************************************************************usuarios************************/
 CREATE USER Administrador WITH LOGIN ENCRYPTED PASSWORD '123';
